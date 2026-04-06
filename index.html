@@ -37,101 +37,43 @@
         }
 
         /* =====================================================
-         * ANIMATED BLOB BACKGROUND
-         * Fixed, sits behind everything, covers all views.
-         * Uses will-change + translate3d so GPU-composited.
+         * ANIMATED LAVA LAMP BACKGROUND — JS-driven
          * ===================================================== */
         .bg-stage {
             position: fixed;
             inset: 0;
-            z-index: 0; /* sits below z-index:1 content */
+            z-index: 0;
             overflow: hidden;
-            background-color: #0a0710; /* fallback deep-dark */
+            background-color: #080510;
         }
 
-        /* Single canvas-like div we blur heavily */
         .bg-canvas {
             position: absolute;
-            inset: -20%; /* oversize so blurred edges don't reveal void */
-            filter: blur(90px) saturate(1.4);
+            inset: -25%;
+            filter: blur(80px) saturate(1.6) contrast(1.1);
         }
 
-        .blob {
+        .lava-blob {
             position: absolute;
             border-radius: 50%;
-            will-change: transform;
+            will-change: transform, opacity;
+            transition: opacity 3s ease;
         }
 
-        /* Deep Fuchsia blob — top-left */
-        .blob-fuchsia {
-            width: 70vw;
-            height: 70vw;
-            background: radial-gradient(circle at 40% 40%, #c81e96 0%, #8b0a6a 40%, transparent 70%);
-            top: -15%;
-            left: -15%;
-            opacity: 0.75;
-            animation: driftA 48s ease-in-out infinite alternate;
-        }
-
-        /* Rich Violet blob — bottom-right */
-        .blob-violet {
-            width: 65vw;
-            height: 65vw;
-            background: radial-gradient(circle at 55% 55%, #6a0dad 0%, #3a006f 45%, transparent 70%);
-            bottom: -20%;
-            right: -10%;
-            opacity: 0.8;
-            animation: driftB 60s ease-in-out infinite alternate;
-            animation-delay: -20s;
-        }
-
-        /* Bronze/Gold accent blob — centre */
-        .blob-gold {
-            width: 45vw;
-            height: 45vw;
-            background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.7) 0%, rgba(160,100,20,0.4) 45%, transparent 70%);
-            top: 25%;
-            left: 28%;
-            opacity: 0.55;
-            animation: driftC 55s ease-in-out infinite alternate;
-            animation-delay: -35s;
-        }
-
-        /* 4th deep-indigo blob for fill */
-        .blob-indigo {
-            width: 55vw;
-            height: 55vw;
-            background: radial-gradient(circle at 45% 45%, #1a0a3d 0%, #0d0520 50%, transparent 70%);
-            top: 40%;
-            right: 15%;
-            opacity: 0.6;
-            animation: driftD 70s ease-in-out infinite alternate;
-            animation-delay: -10s;
-        }
-
-        @keyframes driftA {
-            0%   { transform: translate3d(0, 0, 0) scale(1); }
-            25%  { transform: translate3d(12vw, -8vh, 0) scale(1.08); }
-            50%  { transform: translate3d(20vw, 5vh, 0) scale(0.95); }
-            75%  { transform: translate3d(5vw, 12vh, 0) scale(1.1); }
-            100% { transform: translate3d(-5vw, -5vh, 0) scale(1.05); }
-        }
-        @keyframes driftB {
-            0%   { transform: translate3d(0, 0, 0) scale(1); }
-            30%  { transform: translate3d(-15vw, 10vh, 0) scale(1.12); }
-            60%  { transform: translate3d(-8vw, -12vh, 0) scale(0.92); }
-            100% { transform: translate3d(8vw, 6vh, 0) scale(1.06); }
-        }
-        @keyframes driftC {
-            0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-            40%  { transform: translate3d(-10vw, -10vh, 0) scale(1.15) rotate(15deg); }
-            80%  { transform: translate3d(10vw, 8vh, 0) scale(0.88) rotate(-10deg); }
-            100% { transform: translate3d(5vw, -5vh, 0) scale(1.05) rotate(5deg); }
-        }
-        @keyframes driftD {
-            0%   { transform: translate3d(0, 0, 0) scale(1); }
-            50%  { transform: translate3d(-18vw, -8vh, 0) scale(1.1); }
-            100% { transform: translate3d(10vw, 12vh, 0) scale(0.9); }
+        /* =====================================================
+         * SPLASH — image_1.png overlay ONLY on that view
+         * ===================================================== */
+        .splash-bg-image {
+            position: absolute;
+            inset: 0;
+            background-image: url('images/image_1.png');
+            background-size: cover;
+            background-position: center;
+            /* Dark radial overlay so text pops over the photo */
+            -webkit-mask-image: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.9) 70%, black 100%);
+            mask-image: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.9) 70%, black 100%);
+            z-index: 0;
+            pointer-events: none;
         }
 
         /* Vignette overlay — darkens edges so text is always legible */
@@ -537,15 +479,10 @@
 <body>
 
     <!-- =====================================================
-         ANIMATED BLOB BACKGROUND — fixed, behind everything
+         LAVA LAMP BACKGROUND — JS-driven, fixed behind everything
          ===================================================== -->
     <div class="bg-stage">
-        <div class="bg-canvas">
-            <div class="blob blob-fuchsia"></div>
-            <div class="blob blob-violet"></div>
-            <div class="blob blob-gold"></div>
-            <div class="blob blob-indigo"></div>
-        </div>
+        <div class="bg-canvas" id="lava-canvas"></div>
     </div>
 
     <!-- Vignette darkens edges for legibility -->
@@ -558,6 +495,8 @@
 
         <!-- VIEW 1: Splash -->
         <section id="view-splash" class="view active" style="display: flex;">
+            <!-- Photo overlay ONLY on splash — blobs still glow underneath -->
+            <div class="splash-bg-image"></div>
             <div class="splash-content">
                 <h1>Vanderpump Guess Who</h1>
                 <h2 class="script-font">The SUR Edition</h2>
@@ -630,6 +569,180 @@
     </div>
 
     <script>
+        /* =====================================================
+         * LAVA LAMP ENGINE
+         * Spawns blobs that drift, pulse, appear, disappear,
+         * and "merge" (two small ones fade while a larger one
+         * fades in at their midpoint).
+         * ===================================================== */
+        const COLORS = [
+            { core: '#d4187c', mid: '#8b0a6a' },   // deep fuchsia
+            { core: '#7b12d4', mid: '#3a006f' },   // rich violet
+            { core: '#c81ec8', mid: '#6a006a' },   // magenta
+            { core: '#d4af37', mid: '#a05c10' },   // gold/bronze
+            { core: '#9b1de8', mid: '#4a0090' },   // purple
+            { core: '#e01870', mid: '#900040' },   // hot pink
+            { core: '#5510c8', mid: '#200060' },   // indigo
+        ];
+
+        const canvas = document.getElementById('lava-canvas');
+        let blobs = [];
+        let blobId = 0;
+
+        /* Viewport size relative to canvas (canvas is inset: -25%) */
+        function vw() { return window.innerWidth  * 1.5; }
+        function vh() { return window.innerHeight * 1.5; }
+
+        function rand(min, max) { return min + Math.random() * (max - min); }
+        function pick(arr)       { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function createBlob(opts = {}) {
+            const color  = opts.color  || pick(COLORS);
+            const size   = opts.size   || rand(120, 380);
+            const startX = opts.x      !== undefined ? opts.x : rand(-size/2, vw() - size/2);
+            const startY = opts.y      !== undefined ? opts.y : rand(-size/2, vh() - size/2);
+            const opacity = opts.opacity !== undefined ? opts.opacity : rand(0.55, 0.85);
+            const speed  = opts.speed  || rand(18, 42); // seconds per full path
+
+            const el = document.createElement('div');
+            el.className = 'lava-blob';
+            el.style.cssText = `
+                width:${size}px; height:${size}px;
+                left:${startX}px; top:${startY}px;
+                background: radial-gradient(circle at 40% 40%, ${color.core} 0%, ${color.mid} 45%, transparent 70%);
+                opacity:0;
+            `;
+            canvas.appendChild(el);
+
+            const blob = {
+                id: ++blobId,
+                el,
+                x: startX,
+                y: startY,
+                size,
+                color,
+                opacity,
+                speed,        // seconds to drift between waypoints
+                targetX: 0,
+                targetY: 0,
+                alive: true,
+                age: 0,       // seconds alive
+                lifespan: rand(25, 80),  // seconds before it starts to die
+                fadingOut: false,
+            };
+
+            blobs.push(blob);
+            setNewTarget(blob);
+
+            // Fade in
+            requestAnimationFrame(() => {
+                el.style.transition = `opacity ${rand(2,5)}s ease`;
+                el.style.opacity = opacity;
+            });
+
+            return blob;
+        }
+
+        function setNewTarget(blob) {
+            blob.targetX = rand(-blob.size * 0.5, vw() - blob.size * 0.5);
+            blob.targetY = rand(-blob.size * 0.5, vh() - blob.size * 0.5);
+        }
+
+        function removeBlob(blob) {
+            blob.alive = false;
+            blob.el.style.transition = 'opacity 3s ease';
+            blob.el.style.opacity = '0';
+            setTimeout(() => {
+                if (blob.el.parentNode) blob.el.parentNode.removeChild(blob.el);
+            }, 3200);
+            blobs = blobs.filter(b => b.id !== blob.id);
+        }
+
+        /* Try to "merge" two nearby small blobs */
+        function tryMerge() {
+            const small = blobs.filter(b => b.size < 220 && !b.fadingOut);
+            if (small.length < 2) return;
+            // pick two at random
+            const a = small[Math.floor(Math.random() * small.length)];
+            let b;
+            do { b = small[Math.floor(Math.random() * small.length)]; } while (b.id === a.id);
+
+            // spawn a merged blob at midpoint, slightly larger
+            const mx = (a.x + b.x) / 2;
+            const my = (a.y + b.y) / 2;
+            const mergedSize = Math.min(a.size + b.size * 0.6, 400);
+            createBlob({ x: mx, y: my, size: mergedSize, color: pick(COLORS), opacity: rand(0.7, 0.9) });
+
+            // fade the two source blobs out
+            a.fadingOut = true;
+            b.fadingOut = true;
+            removeBlob(a);
+            setTimeout(() => removeBlob(b), 600);
+        }
+
+        /* Spawn initial population */
+        for (let i = 0; i < 7; i++) {
+            setTimeout(() => createBlob(), i * 400);
+        }
+
+        /* Periodic spawn / cull / merge */
+        setInterval(() => {
+            // Keep blob count between 5 and 10
+            if (blobs.length < 5) createBlob();
+            if (blobs.length < 8 && Math.random() < 0.5) createBlob();
+            if (blobs.length > 10) removeBlob(blobs[0]);
+            if (Math.random() < 0.3) tryMerge();
+        }, 4000);
+
+        /* Animation loop — move blobs toward their targets */
+        let last = null;
+        function tick(ts) {
+            if (!last) last = ts;
+            const dt = Math.min((ts - last) / 1000, 0.1); // seconds, capped
+            last = ts;
+
+            blobs.forEach(blob => {
+                blob.age += dt;
+
+                // Age-based die-off
+                if (!blob.fadingOut && blob.age > blob.lifespan) {
+                    blob.fadingOut = true;
+                    removeBlob(blob);
+                    // Replace it
+                    setTimeout(() => createBlob(), rand(500, 2000));
+                    return;
+                }
+
+                // Drift toward target
+                const dx = blob.targetX - blob.x;
+                const dy = blob.targetY - blob.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                // Speed: pixels per second — slower = dreamier
+                const px = blob.speed * 4;
+
+                if (dist < px * dt + 5) {
+                    // Reached target — pick a new one, optionally pulse size
+                    setNewTarget(blob);
+                    // Subtle size pulse
+                    const pulse = rand(0.88, 1.12);
+                    blob.el.style.transition = `transform ${rand(6,14)}s ease-in-out, opacity 3s ease`;
+                    blob.el.style.transform = `scale(${pulse})`;
+                } else {
+                    blob.x += (dx / dist) * px * dt;
+                    blob.y += (dy / dist) * px * dt;
+                    blob.el.style.left = blob.x + 'px';
+                    blob.el.style.top  = blob.y + 'px';
+                }
+            });
+
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        /* =====================================================
+         * GAME LOGIC
+         * ===================================================== */
         const IMAGE_DICTIONARY = {
             "Lisa":        "images/lisa.jpg",
             "Ken":         "images/ken.jpg",
@@ -664,7 +777,6 @@
             renderSelectorGrid();
             renderGameBoard();
 
-            // Fallback for demo images on How to Play screen
             const activeImg = document.getElementById('demo-img-active');
             const elimImg   = document.getElementById('demo-img-elim');
             activeImg.onerror = elimImg.onerror = function () {
@@ -673,7 +785,6 @@
             };
         };
 
-        /* Smooth fade-transition between views */
         function switchView(viewId) {
             const currentView = document.querySelector('.view.active');
             const nextView    = document.getElementById(viewId);
@@ -683,7 +794,6 @@
             setTimeout(() => {
                 currentView.classList.remove('active');
                 currentView.style.display = 'none';
-
                 nextView.style.display = 'flex';
                 setTimeout(() => nextView.classList.add('active'), 50);
             }, 600);
