@@ -16,7 +16,7 @@
             --sur-white: #FFFFFF;
             --sur-text-light: #F0F0F0;
             --sur-dark-matte: rgba(20, 15, 22, 0.85);
-            --sur-card-bg: rgba(35, 25, 40, 0.7);
+            --sur-card-bg: rgba(35, 25, 40, 0.6);
         }
 
         /* --- Global Reset & Strict Zero-Scroll Layout --- */
@@ -32,32 +32,64 @@
             width: 100%;
             overflow: hidden; /* CRITICAL: Zero scrolling on the body */
             color: var(--sur-text-light);
-            background-color: #05020a;
+            background-color: #0d0d12; /* Deep charcoal/near-black base */
         }
 
-        /* --- Immersive Animated Background (Apple Music Style) --- */
-        body::before {
-            content: "";
-            position: absolute;
-            top: -50%; left: -50%; right: -50%; bottom: -50%;
+        /* --- Immersive CSS Animated Background (Apple Music Style) --- */
+        .bg-blobs {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
             z-index: -2;
-            background: linear-gradient(
-                120deg, 
-                #0d0614 0%, 
-                #5a104f 25%, 
-                #230c33 50%, 
-                #1e0a29 70%, 
-                #422a0f 100%
-            );
-            background-size: 300% 300%;
-            animation: driftBlobs 60s ease-in-out infinite alternate;
-            filter: blur(80px); /* Creates the soft blob effect */
+            overflow: hidden;
+            filter: blur(80px); /* Heavy blur for the blobs */
+            transform: scale(1.2); /* Push edges out so blur doesn't bleed */
         }
 
-        @keyframes driftBlobs {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 100%; }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatBlob 45s infinite alternate ease-in-out;
+        }
+
+        .blob-fuchsia {
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, #C81E96, transparent 60%);
+            top: -10%; left: -10%;
+            animation-duration: 40s;
+        }
+
+        .blob-violet {
+            width: 65vw; height: 65vw;
+            background: radial-gradient(circle, #8A2BE2, transparent 60%);
+            bottom: -20%; right: -10%;
+            animation-duration: 55s;
+            animation-delay: -15s; /* Stagger the start time */
+        }
+
+        .blob-gold {
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.8), transparent 60%);
+            top: 20%; left: 30%;
+            animation-duration: 65s;
+            animation-delay: -30s;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(15vw, -15vh) scale(1.1); }
+            66% { transform: translate(-10vw, 10vh) scale(0.9); }
+            100% { transform: translate(5vw, -5vh) scale(1.2); }
+        }
+
+        /* Ambient overlay to ensure text legibility */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+            pointer-events: none;
         }
 
         #app {
@@ -79,7 +111,7 @@
             width: 100%;
             opacity: 0;
             transition: opacity 0.6s ease-in-out;
-            overflow: hidden; /* Lock individual views */
+            overflow: hidden;
         }
 
         .view.active {
@@ -87,7 +119,6 @@
             opacity: 1;
         }
 
-        /* Allow scrolling ONLY on non-game text screens if the viewport is incredibly small */
         #view-instructions, #view-selector {
             overflow-y: auto;
             padding: 2rem;
@@ -145,7 +176,6 @@
             cursor: not-allowed;
             background-color: rgba(0,0,0,0.2);
             box-shadow: none;
-            transform: none;
         }
 
         /* --- View 1: Splash Screen Specifics --- */
@@ -160,7 +190,6 @@
             content: "";
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            /* Heavy dark vignette blending edges to match the app */
             background: radial-gradient(circle, rgba(13, 6, 20, 0.5) 0%, rgba(5, 2, 10, 0.95) 100%);
             z-index: 0;
         }
@@ -202,7 +231,7 @@
             text-shadow: 1px 1px 10px rgba(0,0,0,0.9);
         }
 
-        /* --- Shared Containers --- */
+        /* --- Instruction Card & Selector Card (Dark/Premium Vibe) --- */
         .gold-container {
             border: 2px solid var(--sur-gold);
             background: var(--sur-dark-matte);
@@ -215,7 +244,6 @@
             backdrop-filter: blur(15px);
         }
 
-        /* --- View 2: Instructions --- */
         .demo-box {
             display: flex;
             justify-content: center;
@@ -223,6 +251,7 @@
             margin: 2rem 0;
             align-items: center;
         }
+        
         .demo-card {
             width: 150px;
             border: 1px solid var(--sur-gold);
@@ -231,6 +260,7 @@
             border-radius: 8px;
             color: var(--sur-white);
         }
+        
         .demo-card img {
             width: 100%;
             aspect-ratio: 1/1;
@@ -238,14 +268,17 @@
             border-radius: 4px;
             margin-bottom: 8px;
         }
+        
         .demo-card.eliminated img {
             filter: grayscale(100%);
             opacity: 0.3;
         }
+        
         .demo-card.eliminated p {
             color: #888;
             text-decoration: line-through;
         }
+        
         .arrow { font-size: 2.5rem; color: var(--sur-gold); text-shadow: 0 0 10px rgba(212,175,55,0.3); }
 
         /* --- View 3: Selector --- */
@@ -258,6 +291,7 @@
             margin-left: auto;
             margin-right: auto;
         }
+        
         .selector-btn {
             padding: 12px;
             font-size: 1rem;
@@ -265,11 +299,13 @@
             border-width: 1px;
             background: rgba(0,0,0,0.4);
         }
+        
         .selector-btn.selected {
             background-color: var(--sur-gold);
             color: #111;
             box-shadow: 0 0 15px rgba(212,175,55,0.5);
         }
+        
         .feedback-banner {
             background: rgba(212, 175, 55, 0.1);
             border: 1px solid var(--sur-gold);
@@ -292,11 +328,11 @@
             width: 100%;
             text-align: center;
             padding: 12px;
-            background: rgba(15, 10, 18, 0.85);
+            background: rgba(15, 10, 18, 0.7);
             border-bottom: 2px solid var(--sur-gold);
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             z-index: 10;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
         }
         
         .game-header h2 {
@@ -311,20 +347,21 @@
             flex-direction: row;
             width: 100%;
             flex: 1; /* Occupies remaining height below header */
-            min-height: 0; /* Critical for flex child zero-scrolling */
-            padding: 15px 0 15px 15px; /* No padding on right so notepad touches edge */
-            gap: 20px;
+            min-height: 0; 
+            /* Fixed padding: 30px on right for notepad breathing room */
+            padding: 20px 30px; 
+            gap: 25px; /* Spacing between grid and notepad */
         }
 
         /* Left Side: 6x4 Character Grid */
         .board-container {
-            flex: 4; /* Takes up more horizontal space */
+            flex: 4; 
             display: grid;
             /* Exactly 6 Columns, 4 Rows */
             grid-template-columns: repeat(6, minmax(0, 1fr));
             grid-template-rows: repeat(4, minmax(0, 1fr));
             gap: 12px;
-            height: 100%; /* Force grid to fill container */
+            height: 100%; 
         }
 
         .character-card {
@@ -338,7 +375,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             backdrop-filter: blur(5px);
             
-            /* Flex layout to fit image and text perfectly inside row bounds */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -348,8 +384,8 @@
 
         .character-card img {
             width: 100%;
-            flex: 1; /* Stretch to fill available vertical space */
-            min-height: 0; /* Prevent flex blowout */
+            flex: 1; 
+            min-height: 0; 
             object-fit: cover;
             border-radius: 4px;
             transition: all 0.3s ease;
@@ -358,7 +394,7 @@
         .character-card p {
             flex-shrink: 0;
             font-weight: 700;
-            font-size: clamp(0.7rem, 1.2vw, 0.95rem); /* Responsive font scaling */
+            font-size: clamp(0.7rem, 1.2vw, 0.95rem); 
             color: var(--sur-white);
             margin-top: 6px;
             letter-spacing: 0.5px;
@@ -391,22 +427,22 @@
             text-decoration: line-through;
         }
 
-        /* Right Side: Full-Bleed SUR Notepad */
+        /* Right Side: SUR Notepad */
         .notepad-container {
             flex: 1.2;
             min-width: 300px;
             height: 100%;
             display: flex;
             flex-direction: column;
-            box-shadow: -10px 0px 30px rgba(0,0,0,0.5);
-            border-radius: 12px 0 0 12px; /* Flush against right edge */
+            box-shadow: -5px 5px 25px rgba(0,0,0,0.4);
+            border-radius: 12px; /* Re-rounded since it has margin now */
             overflow: hidden;
-            border-left: 1px solid #333;
+            border: 1px solid rgba(212, 175, 55, 0.3); /* Soft gold border */
         }
 
         .notepad-header {
             flex-shrink: 0;
-            background: #151017;
+            background: rgba(21, 16, 23, 0.9);
             color: var(--sur-gold);
             text-align: center;
             padding: 20px 15px 15px 15px;
@@ -423,9 +459,8 @@
             font-size: 1.2rem;
             line-height: 40px;
             color: var(--sur-gold-light);
-            background-color: #1a141d;
-            text-align: center; /* Center placeholder and typed clues */
-            /* Dark lined paper effect */
+            background-color: rgba(26, 20, 29, 0.9); /* Slightly transparent to let blobs bleed through */
+            text-align: center; 
             background-image: repeating-linear-gradient(transparent, transparent 39px, rgba(212,175,55,0.1) 39px, rgba(212,175,55,0.1) 40px);
             outline: none;
         }
@@ -435,16 +470,22 @@
             text-align: center;
         }
 
-        /* --- Responsive Safeties (Just in case) --- */
+        /* --- Responsive Safeties (Tablets & Mobile) --- */
         @media (max-width: 1024px) {
             .game-content-wrapper { flex-direction: column; padding: 15px; overflow-y: auto; }
             .board-container { min-height: 600px; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(6, 1fr); }
-            .notepad-container { border-radius: 8px; min-height: 400px; border: 1px solid #333; }
-            html, body { overflow: auto; } /* Re-enable scrolling on small devices */
+            .notepad-container { min-height: 400px; }
+            html, body { overflow: auto; } 
         }
     </style>
 </head>
 <body>
+
+    <div class="bg-blobs">
+        <div class="blob blob-fuchsia"></div>
+        <div class="blob blob-violet"></div>
+        <div class="blob blob-gold"></div>
+    </div>
 
     <div id="app">
 
@@ -557,7 +598,7 @@
             renderSelectorGrid();
             renderGameBoard();
             
-            // Set demo images to fallback correctly if missing
+            // Fallback for demo images
             const activeImg = document.getElementById('demo-img-active');
             const elimImg = document.getElementById('demo-img-elim');
             activeImg.onerror = elimImg.onerror = function() {
@@ -579,12 +620,11 @@
                     currentView.style.display = 'none';
                     
                     nextView.style.display = 'flex';
-                    // Timeout ensures display:flex is rendered before fading opacity up
                     setTimeout(() => {
                         nextView.classList.add('active');
                     }, 50);
                     
-                }, 600); // Matches CSS transition duration
+                }, 600); 
             }
         }
 
