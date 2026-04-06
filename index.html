@@ -30,75 +30,129 @@
         html, body {
             height: 100%;
             width: 100%;
-            overflow: hidden; /* CRITICAL: Zero scrolling on the body */
+            overflow: hidden;
             color: var(--sur-text-light);
-            background-color: #0d0d12; /* Deep charcoal/near-black base */
+            /* Deep charcoal/near-black base so blobs have contrast */
+            background-color: #0a0710;
         }
 
-        /* --- Immersive CSS Animated Background (Apple Music Style) --- */
-        .bg-blobs {
+        /* =====================================================
+         * ANIMATED BLOB BACKGROUND
+         * Fixed, sits behind everything, covers all views.
+         * Uses will-change + translate3d so GPU-composited.
+         * ===================================================== */
+        .bg-stage {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -2;
+            inset: 0;
+            z-index: 0; /* sits below z-index:1 content */
             overflow: hidden;
-            filter: blur(80px); /* Heavy blur for the blobs */
-            transform: scale(1.2); /* Push edges out so blur doesn't bleed */
+            background-color: #0a0710; /* fallback deep-dark */
+        }
+
+        /* Single canvas-like div we blur heavily */
+        .bg-canvas {
+            position: absolute;
+            inset: -20%; /* oversize so blurred edges don't reveal void */
+            filter: blur(90px) saturate(1.4);
         }
 
         .blob {
             position: absolute;
             border-radius: 50%;
-            opacity: 0.6;
-            animation: floatBlob 45s infinite alternate ease-in-out;
+            will-change: transform;
         }
 
+        /* Deep Fuchsia blob — top-left */
         .blob-fuchsia {
-            width: 60vw; height: 60vw;
-            background: radial-gradient(circle, #C81E96, transparent 60%);
-            top: -10%; left: -10%;
-            animation-duration: 40s;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle at 40% 40%, #c81e96 0%, #8b0a6a 40%, transparent 70%);
+            top: -15%;
+            left: -15%;
+            opacity: 0.75;
+            animation: driftA 48s ease-in-out infinite alternate;
         }
 
+        /* Rich Violet blob — bottom-right */
         .blob-violet {
-            width: 65vw; height: 65vw;
-            background: radial-gradient(circle, #8A2BE2, transparent 60%);
-            bottom: -20%; right: -10%;
-            animation-duration: 55s;
-            animation-delay: -15s; /* Stagger the start time */
+            width: 65vw;
+            height: 65vw;
+            background: radial-gradient(circle at 55% 55%, #6a0dad 0%, #3a006f 45%, transparent 70%);
+            bottom: -20%;
+            right: -10%;
+            opacity: 0.8;
+            animation: driftB 60s ease-in-out infinite alternate;
+            animation-delay: -20s;
         }
 
+        /* Bronze/Gold accent blob — centre */
         .blob-gold {
-            width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.8), transparent 60%);
-            top: 20%; left: 30%;
-            animation-duration: 65s;
-            animation-delay: -30s;
+            width: 45vw;
+            height: 45vw;
+            background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.7) 0%, rgba(160,100,20,0.4) 45%, transparent 70%);
+            top: 25%;
+            left: 28%;
+            opacity: 0.55;
+            animation: driftC 55s ease-in-out infinite alternate;
+            animation-delay: -35s;
         }
 
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(15vw, -15vh) scale(1.1); }
-            66% { transform: translate(-10vw, 10vh) scale(0.9); }
-            100% { transform: translate(5vw, -5vh) scale(1.2); }
+        /* 4th deep-indigo blob for fill */
+        .blob-indigo {
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(circle at 45% 45%, #1a0a3d 0%, #0d0520 50%, transparent 70%);
+            top: 40%;
+            right: 15%;
+            opacity: 0.6;
+            animation: driftD 70s ease-in-out infinite alternate;
+            animation-delay: -10s;
         }
 
-        /* Ambient overlay to ensure text legibility */
-        body::after {
-            content: "";
+        @keyframes driftA {
+            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            25%  { transform: translate3d(12vw, -8vh, 0) scale(1.08); }
+            50%  { transform: translate3d(20vw, 5vh, 0) scale(0.95); }
+            75%  { transform: translate3d(5vw, 12vh, 0) scale(1.1); }
+            100% { transform: translate3d(-5vw, -5vh, 0) scale(1.05); }
+        }
+        @keyframes driftB {
+            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            30%  { transform: translate3d(-15vw, 10vh, 0) scale(1.12); }
+            60%  { transform: translate3d(-8vw, -12vh, 0) scale(0.92); }
+            100% { transform: translate3d(8vw, 6vh, 0) scale(1.06); }
+        }
+        @keyframes driftC {
+            0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+            40%  { transform: translate3d(-10vw, -10vh, 0) scale(1.15) rotate(15deg); }
+            80%  { transform: translate3d(10vw, 8vh, 0) scale(0.88) rotate(-10deg); }
+            100% { transform: translate3d(5vw, -5vh, 0) scale(1.05) rotate(5deg); }
+        }
+        @keyframes driftD {
+            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            50%  { transform: translate3d(-18vw, -8vh, 0) scale(1.1); }
+            100% { transform: translate3d(10vw, 12vh, 0) scale(0.9); }
+        }
+
+        /* Vignette overlay — darkens edges so text is always legible */
+        .bg-vignette {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: -1;
+            inset: 0;
+            z-index: 1;
+            background: radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(5,2,10,0.65) 100%);
             pointer-events: none;
         }
 
+        /* =====================================================
+         * APP SHELL — sits above background (z-index 2+)
+         * ===================================================== */
         #app {
             height: 100%;
             width: 100%;
             display: flex;
             flex-direction: column;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         /* --- View Management & Transitions --- */
@@ -112,6 +166,8 @@
             opacity: 0;
             transition: opacity 0.6s ease-in-out;
             overflow: hidden;
+            /* All views are transparent so blobs show through */
+            background: transparent;
         }
 
         .view.active {
@@ -125,9 +181,7 @@
         }
 
         /* --- Typography --- */
-        .script-font {
-            font-family: 'Great Vibes', cursive;
-        }
+        .script-font { font-family: 'Great Vibes', cursive; }
 
         h2 {
             font-size: 2.2rem;
@@ -178,24 +232,13 @@
             box-shadow: none;
         }
 
-        /* --- View 1: Splash Screen Specifics --- */
+        /* --- View 1: Splash Screen --- */
+        /* No background-image — blobs are the backdrop now */
         #view-splash {
             padding: 0;
-            background-image: url('images/image_1.png');
-            background-size: cover;
-            background-position: center;
-        }
-
-        #view-splash::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(13, 6, 20, 0.5) 0%, rgba(5, 2, 10, 0.95) 100%);
-            z-index: 0;
         }
 
         .splash-content {
-            z-index: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -231,7 +274,7 @@
             text-shadow: 1px 1px 10px rgba(0,0,0,0.9);
         }
 
-        /* --- Instruction Card & Selector Card (Dark/Premium Vibe) --- */
+        /* --- Instruction Card & Selector Card --- */
         .gold-container {
             border: 2px solid var(--sur-gold);
             background: var(--sur-dark-matte);
@@ -241,7 +284,10 @@
             text-align: center;
             max-width: 850px;
             width: 100%;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
+            /* Ensure it appears above bg-vignette */
+            position: relative;
+            z-index: 3;
         }
 
         .demo-box {
@@ -328,11 +374,11 @@
             width: 100%;
             text-align: center;
             padding: 12px;
-            background: rgba(15, 10, 18, 0.7);
+            background: rgba(15, 10, 18, 0.75);
             border-bottom: 2px solid var(--sur-gold);
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             z-index: 10;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
         }
         
         .game-header h2 {
@@ -346,22 +392,21 @@
             display: flex;
             flex-direction: row;
             width: 100%;
-            flex: 1; /* Occupies remaining height below header */
-            min-height: 0; 
-            /* Fixed padding: 30px on right for notepad breathing room */
-            padding: 20px 30px; 
-            gap: 25px; /* Spacing between grid and notepad */
+            flex: 1;
+            min-height: 0;
+            /* FIX: 30px right padding so notepad has breathing room */
+            padding: 20px 30px 20px 20px;
+            gap: 25px;
         }
 
         /* Left Side: 6x4 Character Grid */
         .board-container {
-            flex: 4; 
+            flex: 4;
             display: grid;
-            /* Exactly 6 Columns, 4 Rows */
             grid-template-columns: repeat(6, minmax(0, 1fr));
             grid-template-rows: repeat(4, minmax(0, 1fr));
             gap: 12px;
-            height: 100%; 
+            height: 100%;
         }
 
         .character-card {
@@ -373,8 +418,7 @@
             transition: all 0.2s ease;
             text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            backdrop-filter: blur(5px);
-            
+            backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -384,8 +428,8 @@
 
         .character-card img {
             width: 100%;
-            flex: 1; 
-            min-height: 0; 
+            flex: 1;
+            min-height: 0;
             object-fit: cover;
             border-radius: 4px;
             transition: all 0.3s ease;
@@ -394,7 +438,7 @@
         .character-card p {
             flex-shrink: 0;
             font-weight: 700;
-            font-size: clamp(0.7rem, 1.2vw, 0.95rem); 
+            font-size: clamp(0.7rem, 1.2vw, 0.95rem);
             color: var(--sur-white);
             margin-top: 6px;
             letter-spacing: 0.5px;
@@ -430,19 +474,19 @@
         /* Right Side: SUR Notepad */
         .notepad-container {
             flex: 1.2;
-            min-width: 300px;
+            min-width: 280px;
             height: 100%;
             display: flex;
             flex-direction: column;
             box-shadow: -5px 5px 25px rgba(0,0,0,0.4);
-            border-radius: 12px; /* Re-rounded since it has margin now */
+            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.3); /* Soft gold border */
+            border: 1px solid rgba(212, 175, 55, 0.4);
         }
 
         .notepad-header {
             flex-shrink: 0;
-            background: rgba(21, 16, 23, 0.9);
+            background: rgba(21, 16, 23, 0.95);
             color: var(--sur-gold);
             text-align: center;
             padding: 20px 15px 15px 15px;
@@ -459,9 +503,12 @@
             font-size: 1.2rem;
             line-height: 40px;
             color: var(--sur-gold-light);
-            background-color: rgba(26, 20, 29, 0.9); /* Slightly transparent to let blobs bleed through */
-            text-align: center; 
-            background-image: repeating-linear-gradient(transparent, transparent 39px, rgba(212,175,55,0.1) 39px, rgba(212,175,55,0.1) 40px);
+            background-color: rgba(18, 13, 22, 0.92);
+            text-align: center;
+            background-image: repeating-linear-gradient(
+                transparent, transparent 39px,
+                rgba(212,175,55,0.12) 39px, rgba(212,175,55,0.12) 40px
+            );
             outline: none;
         }
 
@@ -472,23 +519,44 @@
 
         /* --- Responsive Safeties (Tablets & Mobile) --- */
         @media (max-width: 1024px) {
-            .game-content-wrapper { flex-direction: column; padding: 15px; overflow-y: auto; }
-            .board-container { min-height: 600px; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(6, 1fr); }
+            .game-content-wrapper {
+                flex-direction: column;
+                padding: 15px;
+                overflow-y: auto;
+            }
+            .board-container {
+                min-height: 600px;
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+            }
             .notepad-container { min-height: 400px; }
-            html, body { overflow: auto; } 
+            html, body { overflow: auto; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-blobs">
-        <div class="blob blob-fuchsia"></div>
-        <div class="blob blob-violet"></div>
-        <div class="blob blob-gold"></div>
+    <!-- =====================================================
+         ANIMATED BLOB BACKGROUND — fixed, behind everything
+         ===================================================== -->
+    <div class="bg-stage">
+        <div class="bg-canvas">
+            <div class="blob blob-fuchsia"></div>
+            <div class="blob blob-violet"></div>
+            <div class="blob blob-gold"></div>
+            <div class="blob blob-indigo"></div>
+        </div>
     </div>
 
+    <!-- Vignette darkens edges for legibility -->
+    <div class="bg-vignette"></div>
+
+    <!-- =====================================================
+         APP SHELL
+         ===================================================== -->
     <div id="app">
 
+        <!-- VIEW 1: Splash -->
         <section id="view-splash" class="view active" style="display: flex;">
             <div class="splash-content">
                 <h1>Vanderpump Guess Who</h1>
@@ -498,6 +566,7 @@
             </div>
         </section>
 
+        <!-- VIEW 2: Instructions -->
         <section id="view-instructions" class="view">
             <div class="gold-container">
                 <h2>How to Play</h2>
@@ -520,6 +589,7 @@
             </div>
         </section>
 
+        <!-- VIEW 3: Character Selector -->
         <section id="view-selector" class="view">
             <div class="gold-container">
                 <h2>Choose Your Secret Character</h2>
@@ -537,6 +607,7 @@
             </div>
         </section>
 
+        <!-- VIEW 4: Game Board -->
         <section id="view-game" class="view">
             <div class="game-header">
                 <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-gold); font-weight: bold;"></span></h2>
@@ -544,8 +615,7 @@
             
             <div class="game-content-wrapper">
                 
-                <div class="board-container" id="game-board">
-                    </div>
+                <div class="board-container" id="game-board"></div>
 
                 <div class="notepad-container">
                     <div class="notepad-header script-font">
@@ -560,35 +630,31 @@
     </div>
 
     <script>
-        /* * =========================================================
-         * IMAGE DICTIONARY
-         * =========================================================
-         */
         const IMAGE_DICTIONARY = {
-            "Lisa": "images/lisa.jpg",
-            "Ken": "images/ken.jpg",
-            "Jax": "images/jax.jpg",
-            "Stassi": "images/stassi.jpg",
-            "Sandoval": "images/tom-sandoval.jpg",
-            "Ariana": "images/ariana.jpg",
-            "Schwartz": "images/tom-schwartz.jpg",
-            "Katie": "images/katie.jpg",
-            "Scheana": "images/scheana.jpg",
-            "James": "images/james.jpg",
-            "Lala": "images/lala.jpg",
-            "Kristen": "images/kristen.jpg",
-            "Brittany": "images/brittany.jpg",
-            "Peter": "images/peter.jpg",
-            "Raquel": "images/raquel.jpg",
-            "Beau": "images/beau.jpg",
-            "Charli": "images/charli.jpg",
-            "Dayna": "images/dayna.jpg",
-            "Max": "images/max.jpg",
-            "Brett": "images/brett.jpg",
-            "Billie Lee": "images/billie-lee.jpg",
-            "Vail": "images/vail.jpg",
+            "Lisa":        "images/lisa.jpg",
+            "Ken":         "images/ken.jpg",
+            "Jax":         "images/jax.jpg",
+            "Stassi":      "images/stassi.jpg",
+            "Sandoval":    "images/tom-sandoval.jpg",
+            "Ariana":      "images/ariana.jpg",
+            "Schwartz":    "images/tom-schwartz.jpg",
+            "Katie":       "images/katie.jpg",
+            "Scheana":     "images/scheana.jpg",
+            "James":       "images/james.jpg",
+            "Lala":        "images/lala.jpg",
+            "Kristen":     "images/kristen.jpg",
+            "Brittany":    "images/brittany.jpg",
+            "Peter":       "images/peter.jpg",
+            "Raquel":      "images/raquel.jpg",
+            "Beau":        "images/beau.jpg",
+            "Charli":      "images/charli.jpg",
+            "Dayna":       "images/dayna.jpg",
+            "Max":         "images/max.jpg",
+            "Brett":       "images/brett.jpg",
+            "Billie Lee":  "images/billie-lee.jpg",
+            "Vail":        "images/vail.jpg",
             "Laura-Leigh": "images/laura-leigh.jpg",
-            "Danica": "images/danica.jpg" 
+            "Danica":      "images/danica.jpg"
         };
 
         const characters = Object.keys(IMAGE_DICTIONARY);
@@ -597,35 +663,30 @@
         window.onload = () => {
             renderSelectorGrid();
             renderGameBoard();
-            
-            // Fallback for demo images
+
+            // Fallback for demo images on How to Play screen
             const activeImg = document.getElementById('demo-img-active');
-            const elimImg = document.getElementById('demo-img-elim');
-            activeImg.onerror = elimImg.onerror = function() {
+            const elimImg   = document.getElementById('demo-img-elim');
+            activeImg.onerror = elimImg.onerror = function () {
                 this.onerror = null;
                 this.src = 'https://placehold.co/150x150/231928/D4AF37?text=Lisa';
             };
         };
 
-        // Smooth Fade Transition Logic
+        /* Smooth fade-transition between views */
         function switchView(viewId) {
             const currentView = document.querySelector('.view.active');
-            const nextView = document.getElementById(viewId);
-            
-            if (currentView) {
-                currentView.style.opacity = '0';
-                
-                setTimeout(() => {
-                    currentView.classList.remove('active');
-                    currentView.style.display = 'none';
-                    
-                    nextView.style.display = 'flex';
-                    setTimeout(() => {
-                        nextView.classList.add('active');
-                    }, 50);
-                    
-                }, 600); 
-            }
+            const nextView    = document.getElementById(viewId);
+            if (!currentView) return;
+
+            currentView.style.opacity = '0';
+            setTimeout(() => {
+                currentView.classList.remove('active');
+                currentView.style.display = 'none';
+
+                nextView.style.display = 'flex';
+                setTimeout(() => nextView.classList.add('active'), 50);
+            }, 600);
         }
 
         function renderSelectorGrid() {
@@ -642,19 +703,16 @@
 
         function selectCharacter(name) {
             secretCharacter = name;
-            document.getElementById('selection-feedback').innerHTML = `Your Secret Character is: <span style="font-weight:bold; color: #FFF;">${name}</span>`;
-            
+            document.getElementById('selection-feedback').innerHTML =
+                `Your Secret Character is: <span style="font-weight:bold; color: #FFF;">${name}</span>`;
             document.querySelectorAll('.selector-btn').forEach(btn => {
-                btn.classList.remove('selected');
-                if(btn.innerText === name) btn.classList.add('selected');
+                btn.classList.toggle('selected', btn.innerText === name);
             });
-
             document.getElementById('btn-start-game').disabled = false;
         }
 
         function randomizeCharacter() {
-            const randomName = characters[Math.floor(Math.random() * characters.length)];
-            selectCharacter(randomName);
+            selectCharacter(characters[Math.floor(Math.random() * characters.length)]);
         }
 
         function startGame() {
@@ -666,21 +724,18 @@
         function renderGameBoard() {
             const board = document.getElementById('game-board');
             board.innerHTML = '';
-            
             characters.forEach(name => {
-                const card = document.createElement('div');
+                const card  = document.createElement('div');
                 card.className = 'character-card';
                 card.onclick = () => card.classList.toggle('eliminated');
 
                 const img = document.createElement('img');
-                img.src = IMAGE_DICTIONARY[name];
-                
-                img.onerror = function() {
+                img.src   = IMAGE_DICTIONARY[name];
+                img.alt   = name;
+                img.onerror = function () {
                     this.onerror = null;
-                    this.src = `https://placehold.co/150x150/231928/D4AF37?text=${name.substring(0,3)}`;
+                    this.src = `https://placehold.co/150x150/231928/D4AF37?text=${encodeURIComponent(name.substring(0,3))}`;
                 };
-                
-                img.alt = name;
 
                 const label = document.createElement('p');
                 label.innerText = name;
