@@ -11,19 +11,17 @@
     
     <style>
         :root {
-            --sur-light-pink: #FFF0F5;
-            --sur-blush: #F8C8D6;
-            --sur-dark-pink: #DDA7B0;
             --sur-gold: #D4AF37;
             --sur-gold-light: #F4D068;
             --sur-white: #FFFFFF;
-            --sur-text: #2C2C2C;
-            --marble-bg: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --sur-text-light: #F0F0F0;
+            --sur-dark-matte: rgba(20, 15, 22, 0.85);
+            --sur-card-bg: rgba(35, 25, 40, 0.7);
         }
 
         /* --- Global Reset & 100vh Layout --- */
         * {
-            box-sizing: border-box; /* Fixes padding push-out issues */
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Playfair Display', serif;
@@ -32,9 +30,24 @@
         html, body {
             height: 100%;
             width: 100%;
-            overflow: hidden; /* Strict no-scroll on body */
-            background: var(--marble-bg);
-            color: var(--sur-text);
+            overflow: hidden;
+            color: var(--sur-text-light);
+        }
+
+        /* --- Dynamic "Apple Music" Blurred SUR Background --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background-color: #0d0614; /* Deep space dark base */
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(200, 30, 150, 0.35), transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(138, 43, 226, 0.4), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(75, 0, 130, 0.5), transparent 60%),
+                radial-gradient(circle at 80% 10%, rgba(212, 175, 55, 0.15), transparent 30%);
+            filter: blur(80px);
+            transform: scale(1.1); /* Prevent blurred edges from creeping in */
         }
 
         #app {
@@ -50,11 +63,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%; /* Fill the 100vh app container */
+            height: 100%;
             width: 100%;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            overflow-y: auto; /* Allow scrolling on info/selector screens if window is tiny */
+            overflow-y: auto;
             overflow-x: hidden;
             padding: 2rem;
         }
@@ -71,14 +84,14 @@
 
         h2 {
             font-size: 2.2rem;
-            color: var(--sur-text);
+            color: var(--sur-gold);
             margin-bottom: 1.5rem;
             font-style: italic;
         }
 
         p.subtitle {
             font-size: 1.3rem;
-            color: var(--sur-text);
+            color: var(--sur-text-light);
             text-align: center;
             max-width: 650px;
             margin-bottom: 2.5rem;
@@ -87,8 +100,8 @@
 
         /* --- Buttons --- */
         button {
-            background-color: var(--sur-blush);
-            color: var(--sur-text);
+            background-color: transparent;
+            color: var(--sur-gold);
             border: 2px solid var(--sur-gold);
             padding: 15px 40px;
             font-size: 1.2rem;
@@ -96,52 +109,50 @@
             letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             margin: 10px;
             border-radius: 5px;
             font-weight: 600;
+            backdrop-filter: blur(5px);
         }
 
         button:hover:not(:disabled) {
-            background-color: var(--sur-white);
-            color: var(--sur-gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            background-color: var(--sur-gold);
+            color: #111;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
             transform: translateY(-2px);
         }
 
         button:disabled {
-            border-color: #d1d1d1;
-            color: #999;
+            border-color: #555;
+            color: #555;
             cursor: not-allowed;
-            background-color: #f5f5f5;
+            background-color: rgba(0,0,0,0.2);
             box-shadow: none;
             transform: none;
         }
 
-        /* --- View 1: Start Screen Specifics --- */
+        /* --- View 1: Splash Screen Specifics --- */
         #view-splash {
-            padding: 0; /* Remove default padding for full bleed */
+            padding: 0;
             position: relative;
             background-image: url('images/image_1.png');
             background-size: cover;
             background-position: center;
-            overflow: hidden; /* Lock scrolling */
+            overflow: hidden;
         }
 
-        /* Dark overlay for text legibility */
+        /* Heavy vignette overlay to blend into the app's dark theme */
         #view-splash::before {
             content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.65); /* #000000a0 equivalent */
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(10, 5, 15, 0.4) 0%, rgba(13, 6, 20, 0.95) 100%);
             z-index: 0;
         }
 
         .splash-content {
-            z-index: 1; /* Place above overlay */
+            z-index: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -158,15 +169,15 @@
             text-transform: uppercase;
             letter-spacing: 6px;
             margin-bottom: 0;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.8);
         }
 
         #view-splash h2 {
-            color: var(--sur-gold);
+            color: var(--sur-gold-light);
             font-size: 3.5rem;
             margin-top: -10px;
             margin-bottom: 1rem;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
         }
 
         #view-splash p {
@@ -174,33 +185,20 @@
             font-size: 1.4rem;
             max-width: 700px;
             margin: 0 auto 2.5rem auto;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+            text-shadow: 1px 1px 8px rgba(0,0,0,0.9);
         }
 
-        /* High-end Start Button */
-        #view-splash button {
-            background-color: #8A2BE2; /* Rich purple */
-            color: var(--sur-gold);
-            border: 2px solid var(--sur-gold);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        #view-splash button:hover {
-            box-shadow: 0 0 20px 5px rgba(212, 175, 55, 0.6); /* Metallic gold glow */
-            background-color: #7a25c7;
-        }
-
-        /* --- Shared Containers --- */
+        /* --- Shared Containers (Dark/Premium Vibe) --- */
         .gold-container {
-            border: 1px solid var(--sur-gold);
-            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--sur-gold);
+            background: var(--sur-dark-matte);
             padding: 3rem;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(212,175,55,0.05);
             text-align: center;
             max-width: 850px;
             width: 100%;
+            backdrop-filter: blur(15px);
         }
 
         /* --- View 2: Instructions --- */
@@ -215,8 +213,9 @@
             width: 150px;
             border: 1px solid var(--sur-gold);
             padding: 10px;
-            background: var(--sur-white);
-            border-radius: 4px;
+            background: var(--sur-card-bg);
+            border-radius: 8px;
+            color: var(--sur-white);
         }
         .demo-card img {
             width: 100%;
@@ -233,28 +232,34 @@
             color: #888;
             text-decoration: line-through;
         }
-        .arrow { font-size: 2.5rem; color: var(--sur-dark-pink); }
+        .arrow { font-size: 2.5rem; color: var(--sur-gold); text-shadow: 0 0 10px rgba(212,175,55,0.3); }
 
         /* --- View 3: Selector --- */
         .selector-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(4, 1fr); /* FORCED 4 COLUMNS */
             gap: 12px;
             margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .selector-btn {
             padding: 12px;
             font-size: 1rem;
             margin: 0;
             border-width: 1px;
+            background: rgba(0,0,0,0.3);
         }
         .selector-btn.selected {
             background-color: var(--sur-gold);
-            color: var(--sur-white);
+            color: #111;
+            box-shadow: 0 0 15px rgba(212,175,55,0.4);
         }
         .feedback-banner {
-            background: var(--sur-light-pink);
-            border: 1px solid var(--sur-dark-pink);
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--sur-gold);
+            color: var(--sur-gold-light);
             padding: 20px;
             font-size: 1.4rem;
             font-weight: bold;
@@ -262,27 +267,29 @@
             border-radius: 4px;
         }
 
-        /* --- View 4: Main Game Board (100vh Specifics) --- */
+        /* --- View 4: Main Game Board --- */
         #view-game {
-            padding: 0; /* Remove default padding */
+            padding: 0;
             justify-content: flex-start;
-            overflow: hidden; /* Lock full screen */
+            overflow: hidden;
         }
 
         .game-header {
-            flex-shrink: 0; /* Prevent header from shrinking */
+            flex-shrink: 0;
             width: 100%;
             text-align: center;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--sur-dark-matte);
             border-bottom: 2px solid var(--sur-gold);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             z-index: 10;
+            backdrop-filter: blur(10px);
         }
         
         .game-header h2 {
             margin-bottom: 0;
             font-size: 1.5rem;
+            color: var(--sur-white);
         }
 
         .game-content-wrapper {
@@ -291,41 +298,41 @@
             width: 100%;
             max-width: 1600px;
             margin: 0 auto;
-            flex: 1; /* Take up remaining height below header */
-            overflow: hidden; /* Contain inner scrolling */
+            flex: 1;
+            overflow: hidden;
             padding: 20px;
             gap: 25px;
         }
 
-        /* Left Side: Scrollable Grid Container */
+        /* Left Side: Scrollable Grid */
         .board-container {
             flex: 3;
             height: 100%;
-            overflow-y: auto; /* Internal scroll for grid only */
-            padding-right: 15px; /* Prevent scrollbar from overlapping cards */
+            overflow-y: auto;
+            padding-right: 15px;
         }
 
-        /* Custom Scrollbar for the Board */
         .board-container::-webkit-scrollbar { width: 8px; }
         .board-container::-webkit-scrollbar-track { background: transparent; }
-        .board-container::-webkit-scrollbar-thumb { background: var(--sur-dark-pink); border-radius: 4px; }
+        .board-container::-webkit-scrollbar-thumb { background: var(--sur-gold); border-radius: 4px; }
 
         .board-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(4, 1fr); /* CRITICAL: 4 COLUMNS, 6 ROWS */
             gap: 15px;
-            padding-bottom: 20px; /* Buffer at bottom of scroll */
+            padding-bottom: 20px;
         }
 
         .character-card {
-            background: var(--sur-white);
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
+            background: var(--sur-card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
             padding: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
         }
         .character-card img {
             width: 100%;
@@ -337,76 +344,80 @@
         }
         .character-card p {
             font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--sur-text);
+            font-size: 1rem;
+            color: var(--sur-white);
+            letter-spacing: 1px;
         }
         .character-card:hover {
             border-color: var(--sur-gold);
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
         }
         .character-card.eliminated {
-            border-color: #eee;
+            border-color: #222;
             transform: none;
-            box-shadow: none;
-            background: #fafafa;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            background: rgba(15, 10, 15, 0.6);
         }
         .character-card.eliminated img {
-            filter: grayscale(100%);
-            opacity: 0.25;
+            filter: grayscale(100%) brightness(40%);
+            opacity: 0.4;
         }
         .character-card.eliminated p {
-            color: #b0b0b0;
+            color: #555;
             text-decoration: line-through;
         }
 
-        /* Right Side: Fixed SUR Notepad */
+        /* Right Side: Fixed SUR Notepad (Dark Mode) */
         .notepad-container {
             flex: 1;
             min-width: 320px;
-            height: 100%; /* Sync to wrapper height */
+            height: 100%;
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            box-shadow: -5px 5px 25px rgba(0,0,0,0.4);
             border-radius: 4px;
         }
 
         .notepad-header {
             flex-shrink: 0;
-            background: #fdfaf6;
-            color: var(--sur-text);
+            background: #1a151c; /* Very dark header */
+            color: var(--sur-gold);
             text-align: center;
             padding: 25px 15px 15px 15px;
             font-size: 2rem;
-            border: 1px solid #ddd;
-            border-bottom: 2px solid var(--sur-dark-pink);
-            border-radius: 4px 4px 0 0;
+            border: 1px solid #333;
+            border-bottom: 2px solid var(--sur-gold);
+            border-radius: 8px 8px 0 0;
         }
 
         .notepad {
             width: 100%;
-            flex: 1; /* Stretch vertically to fill container */
-            resize: none; /* Disable manual resize to preserve 100vh sync */
-            border: 1px solid #ddd;
+            flex: 1;
+            resize: none;
+            border: 1px solid #333;
             border-top: none;
-            border-radius: 0 0 4px 4px;
+            border-radius: 0 0 8px 8px;
             padding: 35px 20px 20px 60px;
             font-size: 1.2rem;
             line-height: 40px;
-            color: #333;
-            background-color: #fdfaf6;
+            color: var(--sur-gold-light);
+            background-color: #221a24; /* Dark paper */
+            /* Dark lined paper effect: Gold vertical line, subtle dark horizontal lines */
             background-image: 
-                linear-gradient(90deg, transparent 50px, #ffb3c6 50px, #ffb3c6 52px, transparent 52px),
-                repeating-linear-gradient(transparent, transparent 39px, #a8c1db 39px, #a8c1db 40px);
+                linear-gradient(90deg, transparent 50px, rgba(212,175,55,0.4) 50px, rgba(212,175,55,0.4) 52px, transparent 52px),
+                repeating-linear-gradient(transparent, transparent 39px, rgba(255,255,255,0.05) 39px, rgba(255,255,255,0.05) 40px);
             outline: none;
+        }
+        .notepad::placeholder {
+            color: rgba(212, 175, 55, 0.4);
         }
 
         /* Responsive Adjustments */
         @media (max-width: 1200px) {
-            .board-grid { grid-template-columns: repeat(4, 1fr); }
+            .board-grid, .selector-grid { grid-template-columns: repeat(3, 1fr); }
         }
         @media (max-width: 900px) {
-            /* Stack layout on smaller screens */
             .game-content-wrapper { flex-direction: column; overflow-y: auto; }
             .board-container { overflow-y: visible; flex: none; height: auto; }
             .notepad-container { min-height: 500px; flex: none; }
@@ -414,10 +425,11 @@
         @media (max-width: 768px) {
             #view-splash h1 { font-size: 3rem; }
             #view-splash h2 { font-size: 2.5rem; }
-            .board-grid { grid-template-columns: repeat(3, 1fr); }
+            .board-grid, .selector-grid { grid-template-columns: repeat(3, 1fr); }
         }
         @media (max-width: 480px) {
-            .board-grid { grid-template-columns: repeat(2, 1fr); }
+            .board-grid, .selector-grid { grid-template-columns: repeat(2, 1fr); }
+            .gold-container { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -450,7 +462,7 @@
                         <p>Eliminated</p>
                     </div>
                 </div>
-                <p style="margin-bottom: 2rem; font-style: italic; color: #777;">Click a name to gray them out.</p>
+                <p style="margin-bottom: 2rem; font-style: italic; color: #aaa;">Click a name to gray them out.</p>
 
                 <button onclick="switchView('view-selector')">Continue to Selector</button>
             </div>
@@ -466,7 +478,7 @@
                 <button onclick="randomizeCharacter()" style="margin-top: 20px;">Randomize My Character</button>
 
                 <div class="feedback-banner" id="selection-feedback">
-                    Your Secret Character is: <span style="font-style: italic; font-weight: normal;">None Selected</span>
+                    Your Secret Character is: <span style="font-style: italic; font-weight: normal; color: var(--sur-white);">None Selected</span>
                 </div>
 
                 <button id="btn-start-game" disabled onclick="startGame()">Start Game</button>
@@ -498,7 +510,7 @@
 
     <script>
         /* * =========================================================
-         * IMAGE DICTIONARY - UPDATED TO `images/` DIRECTORY
+         * IMAGE DICTIONARY
          * =========================================================
          */
         const IMAGE_DICTIONARY = {
@@ -553,7 +565,6 @@
                         nextView.classList.add('active');
                     }, 50);
                     
-                    // Reset scroll positioning for overflow containers if needed
                     document.querySelector('.board-container').scrollTop = 0;
                     nextView.scrollTop = 0;
                 }, 500); 
@@ -574,7 +585,7 @@
 
         function selectCharacter(name) {
             secretCharacter = name;
-            document.getElementById('selection-feedback').innerHTML = `Your Secret Character is: <span style="font-weight:bold;">${name}</span>`;
+            document.getElementById('selection-feedback').innerHTML = `Your Secret Character is: <span style="font-weight:bold; color: #FFF;">${name}</span>`;
             
             document.querySelectorAll('.selector-btn').forEach(btn => {
                 btn.classList.remove('selected');
@@ -607,10 +618,9 @@
                 const img = document.createElement('img');
                 img.src = IMAGE_DICTIONARY[name];
                 
-                // Fallback placeholder just in case an image fails to load
                 img.onerror = function() {
                     this.onerror = null;
-                    this.src = `https://placehold.co/150x150/F8C8D6/2C2C2C?text=${name.substring(0,3)}`;
+                    this.src = `https://placehold.co/150x150/231928/D4AF37?text=${name.substring(0,3)}`;
                 };
                 
                 img.alt = name;
