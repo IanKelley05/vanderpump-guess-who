@@ -3,225 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vanderpump Rules - Guess Who?</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Vanderpump Guess Who: The SUR Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bravo-pink: #fce4ec;
-            --bravo-gold: #d4af37;
-            --bravo-white: #ffffff;
-            --text-dark: #333333;
+            --sur-pink: #FCE4EC;
+            --sur-dark-pink: #DDA7B0;
+            --sur-gold: #D4AF37;
+            --sur-white: #FFFFFF;
+            --sur-text: #333333;
+            /* Subtle marble texture via CSS gradient */
+            --marble-bg: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Playfair Display', serif;
         }
 
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bravo-pink);
-            color: var(--text-dark);
-            margin: 0;
-            padding: 20px;
-            text-align: center;
+            background: var(--marble-bg);
+            color: var(--sur-text);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* --- View Management (SPA Logic) --- */
+        .view {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Shared UI Elements --- */
         h1 {
-            color: var(--bravo-gold);
+            font-size: 3.5rem;
+            color: var(--sur-gold);
+            text-align: center;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            margin-bottom: 10px;
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
-        .controls {
-            background-color: var(--bravo-white);
-            max-width: 500px;
-            margin: 0 auto 30px auto;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 2px solid var(--bravo-gold);
+        h2 {
+            font-size: 2rem;
+            color: var(--sur-text);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        p.subtitle {
+            font-size: 1.25rem;
+            color: var(--sur-text);
+            text-align: center;
+            max-width: 650px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
         }
 
         button {
-            background-color: var(--bravo-gold);
-            color: var(--bravo-white);
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            background-color: var(--sur-white);
+            color: var(--sur-text);
+            border: 2px solid var(--sur-gold);
+            padding: 15px 35px;
+            font-size: 1.2rem;
             text-transform: uppercase;
-        }
-
-        button:hover {
-            background-color: #bfa030;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .secret-character-box {
-            margin-top: 15px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        #secret-name {
-            color: var(--bravo-gold);
-            font-size: 24px;
-            display: block;
-            margin-top: 5px;
-            min-height: 29px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background-color: var(--bravo-white);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--bravo-gold);
-            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.2);
-        }
-
-        .card img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: all 0.3s ease;
-        }
-
-        .card .name {
-            padding: 12px 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin: 10px;
+            border-radius: 4px;
             font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
         }
 
-        /* Flipped State Styling */
-        .card.flipped img {
+        button:hover:not(:disabled) {
+            background-color: var(--sur-pink);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        button:disabled {
+            border-color: #d1d1d1;
+            color: #a1a1a1;
+            cursor: not-allowed;
+            background-color: #f5f5f5;
+            box-shadow: none;
+        }
+
+        .gold-container {
+            border: 1px solid var(--sur-gold);
+            background: rgba(255, 255, 255, 0.85);
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- View 2: Instructions --- */
+        .demo-box {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            align-items: center;
+        }
+
+        .demo-card {
+            width: 150px;
+            text-align: center;
+            border: 1px solid var(--sur-gold);
+            padding: 10px;
+            background: var(--sur-white);
+            border-radius: 4px;
+        }
+
+        .demo-card img {
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .demo-card.eliminated img {
             filter: grayscale(100%);
             opacity: 0.3;
         }
 
-        .card.flipped .name {
-            opacity: 0.4;
+        .demo-card.eliminated p {
+            color: #888;
             text-decoration: line-through;
         }
 
-        .card.flipped {
-            transform: scale(0.95);
+        .arrow {
+            font-size: 2.5rem;
+            color: var(--sur-dark-pink);
+        }
+
+        /* --- View 3: Selector --- */
+        .selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .selector-btn {
+            padding: 12px;
+            font-size: 1rem;
+            margin: 0;
+            border-width: 1px;
+        }
+
+        .selector-btn.selected {
+            background-color: var(--sur-gold);
+            color: var(--sur-white);
+        }
+
+        .feedback-banner {
+            background: var(--sur-pink);
+            border: 1px solid var(--sur-dark-pink);
+            padding: 20px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 25px 0;
+            border-radius: 4px;
+            letter-spacing: 1px;
+        }
+
+        /* --- View 4: Main Game Board --- */
+        #view-game {
+            display: none;
+            padding: 1rem 2rem;
+            min-height: 100vh;
+            justify-content: flex-start;
+        }
+
+        #view-game.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-header {
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 2px solid var(--sur-gold);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .game-header h2 {
+            margin-bottom: 0;
+            font-size: 1.5rem;
+        }
+
+        .game-layout {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 1400px;
+            gap: 30px;
+            flex: 1;
+        }
+
+        /* Left Side: Board */
+        .board-container {
+            flex: 3;
+        }
+
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        .character-card {
+            background: var(--sur-white);
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .character-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .character-card p {
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            color: var(--sur-text);
+        }
+
+        .character-card:hover {
+            border-color: var(--sur-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .character-card.eliminated {
+            border-color: #eee;
+            transform: none;
             box-shadow: none;
-            border-color: transparent;
+            background: #fafafa;
+        }
+
+        .character-card.eliminated img {
+            filter: grayscale(100%);
+            opacity: 0.25;
         }
         
-        .card.flipped:hover {
-            transform: scale(0.95); /* Prevent hover pop-up when already eliminated */
+        .character-card.eliminated p {
+            color: #b0b0b0;
+            text-decoration: line-through;
+        }
+
+        /* Right Side: SUR Notepad */
+        .notepad-container {
+            flex: 1;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notepad-header {
+            background: var(--sur-pink);
+            color: var(--sur-text);
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 1px solid var(--sur-dark-pink);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-style: italic;
+        }
+
+        .notepad-header::before, .notepad-header::after {
+            content: " 🌸 ";
+        }
+
+        .notepad {
+            width: 100%;
+            flex: 1;
+            min-height: 500px;
+            resize: vertical;
+            border: 1px solid var(--sur-dark-pink);
+            border-radius: 0 0 8px 8px;
+            padding: 35px 20px 20px 50px;
+            font-size: 1.15rem;
+            line-height: 35px; /* Matches the gradient lines */
+            background-color: var(--sur-white);
+            /* Lined paper effect */
+            background-image: linear-gradient(transparent, transparent 34px, #e8c5cc 35px);
+            background-size: 100% 35px;
+            outline: none;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1100px) {
+            .board-grid { grid-template-columns: repeat(4, 1fr); }
+            .game-layout { flex-direction: column; }
+            .notepad-container { min-height: 400px; }
+        }
+        @media (max-width: 650px) {
+            h1 { font-size: 2.2rem; }
+            .board-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .board-grid { grid-template-columns: repeat(2, 1fr); }
+            .gold-container { padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <h1>VPR Guess Who?</h1>
-    
-    <div class="controls">
-        <button id="pick-btn">Pick My Secret Character</button>
-        <div class="secret-character-box">
-            Your Secret Character:
-            <span id="secret-name">???</span>
-        </div>
+    <div id="app">
+
+        <section id="view-splash" class="view active">
+            <h1>Vanderpump Guess Who<br><span style="font-size: 1.8rem; color: var(--sur-dark-pink); display: block; margin-top: 10px;">The SUR Edition</span></h1>
+            <p class="subtitle">Welcome to SUR, the Most Dramatically-Challenged Restaurant in West Hollywood.</p>
+            <button onclick="switchView('view-instructions')">Start Game</button>
+        </section>
+
+        <section id="view-instructions" class="view">
+            <div class="gold-container">
+                <h2>How to Play</h2>
+                <p class="subtitle" style="margin: 0 auto;">Your goal is to guess your partner's mystery character before they guess yours! Ask "Yes" or "No" questions. Click a character to eliminate them from your board.</p>
+                
+                <div class="demo-box">
+                    <div class="demo-card">
+                        <img src="https://via.placeholder.com/150/FCE4EC/333333?text=[LISA_VP_PIC]" alt="Lisa VP Normal">
+                        <p>Active</p>
+                    </div>
+                    <div class="arrow">➔</div>
+                    <div class="demo-card eliminated">
+                        <img src="https://via.placeholder.com/150/FCE4EC/333333?text=[LISA_VP_PIC]" alt="Lisa VP Grayed Out">
+                        <p>Eliminated</p>
+                    </div>
+                </div>
+                <p style="margin-bottom: 2rem; font-style: italic; color: #777;">Click a name to gray them out.</p>
+
+                <button onclick="switchView('view-selector')">Continue to Selector</button>
+            </div>
+        </section>
+
+        <section id="view-selector" class="view">
+            <div class="gold-container">
+                <h2>Choose Your Secret Character</h2>
+                <p style="margin-bottom: 1.5rem;">Select who you will be, or leave it up to fate.</p>
+                
+                <div id="selector-grid" class="selector-grid">
+                    </div>
+
+                <button onclick="randomizeCharacter()" style="margin-top: 20px;">Randomize My Character</button>
+
+                <div class="feedback-banner" id="selection-feedback">
+                    Your Secret Character is: None Selected
+                </div>
+
+                <button id="btn-start-game" disabled onclick="startGame()">Start Game</button>
+            </div>
+        </section>
+
+        <section id="view-game" class="view">
+            <div class="game-header">
+                <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-dark-pink); font-weight: bold;"></span></h2>
+            </div>
+            
+            <div class="game-layout">
+                <div class="board-container">
+                    <div id="game-board" class="board-grid">
+                        </div>
+                </div>
+
+                <div class="notepad-container">
+                    <div class="notepad-header">
+                        SUR NOTES (Don't let them see!)
+                    </div>
+                    <textarea class="notepad" placeholder="Jot down your clues here...&#10;- Not a bartender&#10;- No longer in the intro&#10;- Loves goat cheese balls"></textarea>
+                </div>
+            </div>
+        </section>
+
     </div>
 
-    <div class="grid" id="game-board">
-        </div>
-
     <script>
-        const castMembers = [
-            "Lisa", "Jax", "Stassi", "Scheana", 
-            "Tom Sandoval", "Tom Schwartz", "Katie", "Ariana", 
-            "Lala", "James", "Brittany", "Kristen", 
-            "Beau", "Raquel", "Peter", "Ken", 
-            "Dayna", "Charli", "Danica", "Max", 
-            "Brett", "Billie Lee", "Laura-Leigh", "Vail"
+        // Exact list of 24 characters to make a perfect 4x6 grid
+        const characters = [
+            "Lisa", "Ken", "Jax", "Stassi", "Sandoval", "Ariana", 
+            "Schwartz", "Katie", "Scheana", "James", "Lala", "Kristen", 
+            "Brittany", "Peter", "Raquel", "Beau", "Charli", "Dayna", 
+            "Max", "Brett", "Billie Lee", "Vail", "Laura-Leigh", "Frank"
         ];
 
-        const gameBoard = document.getElementById('game-board');
-        const pickBtn = document.getElementById('pick-btn');
-        const secretNameDisplay = document.getElementById('secret-name');
+        let secretCharacter = null;
 
-        // Function to build the game board
-        function initializeBoard() {
-            // Sort alphabetically for a slightly cleaner layout (optional)
-            const sortedCast = [...castMembers].sort();
+        // Initialize UI on load
+        window.onload = () => {
+            renderSelectorGrid();
+            renderGameBoard();
+        };
 
-            sortedCast.forEach(member => {
-                // Create Card Container
-                const card = document.createElement('div');
-                card.className = 'card';
+        // Switch between SPA views (Hiding/Showing sections)
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0); // Reset scroll position for new view
+        }
 
-                // Create Image (pointing to your local images folder)
-                const img = document.createElement('img');
-                
-                // This converts "Tom Sandoval" to "tom-sandoval.jpg" to match your files
-                const fileName = member.toLowerCase().replaceAll(' ', '-') + '.jpg'; 
-                img.src = `images/${fileName}`;
-                
-                // Fallback just in case an image breaks or doesn't load
-                img.onerror = function() {
-                    this.src = 'https://via.placeholder.com/150/FFFFFF/D4AF37?text=Missing+Pic';
-                };
-                img.alt = member;
-
-                // Create Name Label
-                const nameLabel = document.createElement('div');
-                nameLabel.className = 'name';
-                nameLabel.innerText = member;
-
-                // Append everything
-                card.appendChild(img);
-                card.appendChild(nameLabel);
-                gameBoard.appendChild(card);
-
-                // Add click listener for the 'flipped' state
-                card.addEventListener('click', () => {
-                    card.classList.toggle('flipped');
-                });
+        // Render Selector Buttons
+        function renderSelectorGrid() {
+            const grid = document.getElementById('selector-grid');
+            grid.innerHTML = '';
+            characters.forEach(name => {
+                const btn = document.createElement('button');
+                btn.className = 'selector-btn';
+                btn.innerText = name;
+                btn.onclick = () => selectCharacter(name);
+                grid.appendChild(btn);
             });
         }
 
-        // Function to pick a random character
-        pickBtn.addEventListener('click', () => {
-            const randomIndex = Math.floor(Math.random() * castMembers.length);
-            const secretCharacter = castMembers[randomIndex];
+        // Handle Character Selection & Feedback Update
+        function selectCharacter(name) {
+            secretCharacter = name;
             
-            // Add a little animation effect to the text
-            secretNameDisplay.style.opacity = 0;
-            setTimeout(() => {
-                secretNameDisplay.innerText = secretCharacter;
-                secretNameDisplay.style.opacity = 1;
-            }, 200);
-        });
+            // Update UI feedback banner
+            document.getElementById('selection-feedback').innerText = `Your Secret Character is: ${name}`;
+            
+            // Highlight selected button in the grid
+            document.querySelectorAll('.selector-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if(btn.innerText === name) btn.classList.add('selected');
+            });
 
-        // Initialize the game on load
-        initializeBoard();
+            // Enable Start Game Button
+            document.getElementById('btn-start-game').disabled = false;
+        }
+
+        // Randomize Character logic
+        function randomizeCharacter() {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            const randomName = characters[randomIndex];
+            selectCharacter(randomName);
+        }
+
+        // Transition to Main Game Board
+        function startGame() {
+            if (!secretCharacter) return;
+            // Update the persistent header
+            document.getElementById('game-secret-display').innerText = secretCharacter.toUpperCase();
+            switchView('view-game');
+        }
+
+        // Render the 4x6 Main Game Board cards
+        function renderGameBoard() {
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            
+            characters.forEach(name => {
+                const card = document.createElement('div');
+                card.className = 'character-card';
+                // Toggle elimination appearance on click
+                card.onclick = () => card.classList.toggle('eliminated');
+
+                const img = document.createElement('img');
+                // Using 150x150 placeholder with initials text for clarity
+                img.src = `https://via.placeholder.com/150/FCE4EC/333333?text=${name.substring(0,3).toUpperCase()}`;
+                img.alt = name;
+
+                const label = document.createElement('p');
+                label.innerText = name;
+
+                card.appendChild(img);
+                card.appendChild(label);
+                board.appendChild(card);
+            });
+        }
     </script>
-
 </body>
 </html>
