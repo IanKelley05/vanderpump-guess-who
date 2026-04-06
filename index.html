@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vanderpump Guess Who: The SUR Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --sur-pink: #FCE4EC;
+            --sur-light-pink: #FFF0F5;
+            --sur-blush: #F8C8D6;
             --sur-dark-pink: #DDA7B0;
             --sur-gold: #D4AF37;
+            --sur-gold-light: #F4D068;
             --sur-white: #FFFFFF;
-            --sur-text: #333333;
-            /* Subtle marble texture via CSS gradient */
+            --sur-text: #2C2C2C;
             --marble-bg: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
         }
 
@@ -30,7 +35,7 @@
             overflow-x: hidden;
         }
 
-        /* --- View Management (SPA Logic) --- */
+        /* --- View Management & Transitions --- */
         .view {
             display: none;
             flex-direction: column;
@@ -38,50 +43,61 @@
             justify-content: center;
             min-height: 100vh;
             padding: 2rem;
-            animation: fadeIn 0.6s ease-in-out;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
 
         .view.active {
             display: flex;
+            opacity: 1;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- Typography --- */
+        .script-font {
+            font-family: 'Great Vibes', cursive;
         }
 
-        /* --- Shared UI Elements --- */
-        h1 {
-            font-size: 3.5rem;
+        h1.title-main {
+            font-size: 4rem;
             color: var(--sur-gold);
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 0.5rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            letter-spacing: 5px;
+            margin-bottom: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1.title-sub {
+            font-size: 3.5rem;
+            color: var(--sur-dark-pink);
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            font-weight: normal;
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--sur-text);
             margin-bottom: 1.5rem;
             font-style: italic;
         }
 
         p.subtitle {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             color: var(--sur-text);
             text-align: center;
             max-width: 650px;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             line-height: 1.6;
         }
 
+        /* --- Buttons --- */
         button {
-            background-color: var(--sur-white);
+            background-color: var(--sur-blush);
             color: var(--sur-text);
             border: 2px solid var(--sur-gold);
-            padding: 15px 35px;
+            padding: 15px 40px;
             font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -89,33 +105,61 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             margin: 10px;
-            border-radius: 4px;
+            border-radius: 5px;
             font-weight: 600;
         }
 
         button:hover:not(:disabled) {
-            background-color: var(--sur-pink);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            background-color: var(--sur-white);
+            color: var(--sur-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); /* Hover Glow */
+            transform: translateY(-2px);
         }
 
         button:disabled {
             border-color: #d1d1d1;
-            color: #a1a1a1;
+            color: #999;
             cursor: not-allowed;
             background-color: #f5f5f5;
             box-shadow: none;
+            transform: none;
         }
 
+        /* --- Splash Screen Specifics --- */
+        .splash-frame {
+            border: 3px solid var(--sur-gold);
+            padding: 4rem;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            text-align: center;
+            max-width: 900px;
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+
+        /* Subtle floral watermark effect in corners via pseudo-elements */
+        .splash-frame::before, .splash-frame::after {
+            content: "❀";
+            position: absolute;
+            font-size: 6rem;
+            color: var(--sur-blush);
+            opacity: 0.15;
+            z-index: -1;
+        }
+        .splash-frame::before { top: 10px; left: 20px; }
+        .splash-frame::after { bottom: 10px; right: 20px; }
+
+        /* --- Shared Containers --- */
         .gold-container {
             border: 1px solid var(--sur-gold);
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             padding: 3rem;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             text-align: center;
-            max-width: 800px;
+            max-width: 850px;
             width: 100%;
-            backdrop-filter: blur(5px);
         }
 
         /* --- View 2: Instructions --- */
@@ -126,32 +170,26 @@
             margin: 2rem 0;
             align-items: center;
         }
-
         .demo-card {
             width: 150px;
-            text-align: center;
             border: 1px solid var(--sur-gold);
             padding: 10px;
             background: var(--sur-white);
             border-radius: 4px;
         }
-
         .demo-card img {
             width: 100%;
             border-radius: 4px;
             margin-bottom: 8px;
         }
-
         .demo-card.eliminated img {
             filter: grayscale(100%);
             opacity: 0.3;
         }
-
         .demo-card.eliminated p {
             color: #888;
             text-decoration: line-through;
         }
-
         .arrow {
             font-size: 2.5rem;
             color: var(--sur-dark-pink);
@@ -164,48 +202,37 @@
             gap: 12px;
             margin-bottom: 2rem;
         }
-
         .selector-btn {
             padding: 12px;
             font-size: 1rem;
             margin: 0;
             border-width: 1px;
         }
-
         .selector-btn.selected {
             background-color: var(--sur-gold);
             color: var(--sur-white);
         }
-
         .feedback-banner {
-            background: var(--sur-pink);
+            background: var(--sur-light-pink);
             border: 1px solid var(--sur-dark-pink);
             padding: 20px;
             font-size: 1.4rem;
             font-weight: bold;
             margin: 25px 0;
             border-radius: 4px;
-            letter-spacing: 1px;
         }
 
         /* --- View 4: Main Game Board --- */
         #view-game {
-            display: none;
             padding: 1rem 2rem;
-            min-height: 100vh;
             justify-content: flex-start;
-        }
-
-        #view-game.active {
-            display: flex;
-            flex-direction: column;
         }
 
         .game-header {
             width: 100%;
             text-align: center;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border-bottom: 2px solid var(--sur-gold);
             margin-bottom: 25px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
@@ -213,7 +240,6 @@
             top: 0;
             z-index: 10;
         }
-
         .game-header h2 {
             margin-bottom: 0;
             font-size: 1.5rem;
@@ -228,11 +254,7 @@
             flex: 1;
         }
 
-        /* Left Side: Board */
-        .board-container {
-            flex: 3;
-        }
-
+        .board-container { flex: 3; }
         .board-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -249,102 +271,93 @@
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-
         .character-card img {
             width: 100%;
-            height: auto;
+            aspect-ratio: 1/1;
+            object-fit: cover;
             border-radius: 4px;
             margin-bottom: 8px;
             transition: all 0.3s ease;
         }
-
         .character-card p {
             font-weight: 700;
             font-size: 0.95rem;
-            letter-spacing: 1px;
             color: var(--sur-text);
         }
-
         .character-card:hover {
             border-color: var(--sur-gold);
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
         }
-
         .character-card.eliminated {
             border-color: #eee;
             transform: none;
             box-shadow: none;
             background: #fafafa;
         }
-
         .character-card.eliminated img {
             filter: grayscale(100%);
             opacity: 0.25;
         }
-        
         .character-card.eliminated p {
             color: #b0b0b0;
             text-decoration: line-through;
         }
 
-        /* Right Side: SUR Notepad */
+        /* --- SUR Notepad Styling --- */
         .notepad-container {
             flex: 1;
             min-width: 320px;
             display: flex;
             flex-direction: column;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            border-radius: 4px;
         }
 
         .notepad-header {
-            background: var(--sur-pink);
+            background: #fdfaf6;
             color: var(--sur-text);
             text-align: center;
-            padding: 20px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            border: 1px solid var(--sur-dark-pink);
-            border-bottom: none;
-            border-radius: 8px 8px 0 0;
-            font-style: italic;
-        }
-
-        .notepad-header::before, .notepad-header::after {
-            content: " 🌸 ";
+            padding: 25px 15px 15px 15px;
+            font-size: 2rem;
+            border: 1px solid #ddd;
+            border-bottom: 2px solid var(--sur-dark-pink);
+            border-radius: 4px 4px 0 0;
         }
 
         .notepad {
             width: 100%;
             flex: 1;
             min-height: 500px;
-            resize: vertical;
-            border: 1px solid var(--sur-dark-pink);
-            border-radius: 0 0 8px 8px;
-            padding: 35px 20px 20px 50px;
-            font-size: 1.15rem;
-            line-height: 35px; /* Matches the gradient lines */
-            background-color: var(--sur-white);
-            /* Lined paper effect */
-            background-image: linear-gradient(transparent, transparent 34px, #e8c5cc 35px);
-            background-size: 100% 35px;
+            resize: none;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            padding: 35px 20px 20px 60px;
+            font-size: 1.2rem;
+            line-height: 40px; /* Matches background spacing */
+            color: #333;
+            background-color: #fdfaf6; /* Paper color */
+            /* Realistic lined paper effect: Pink vertical margin line, blue horizontal lines */
+            background-image: 
+                linear-gradient(90deg, transparent 50px, #ffb3c6 50px, #ffb3c6 52px, transparent 52px),
+                repeating-linear-gradient(transparent, transparent 39px, #a8c1db 39px, #a8c1db 40px);
             outline: none;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.02);
-            position: relative;
         }
 
-        /* Responsive Adjustments */
+        /* Responsive */
         @media (max-width: 1100px) {
             .board-grid { grid-template-columns: repeat(4, 1fr); }
             .game-layout { flex-direction: column; }
-            .notepad-container { min-height: 400px; }
         }
-        @media (max-width: 650px) {
-            h1 { font-size: 2.2rem; }
+        @media (max-width: 768px) {
+            h1.title-main { font-size: 2.8rem; }
+            h1.title-sub { font-size: 2.5rem; }
             .board-grid { grid-template-columns: repeat(3, 1fr); }
+            .splash-frame { padding: 2rem; }
         }
         @media (max-width: 480px) {
             .board-grid { grid-template-columns: repeat(2, 1fr); }
-            .gold-container { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -352,10 +365,14 @@
 
     <div id="app">
 
-        <section id="view-splash" class="view active">
-            <h1>Vanderpump Guess Who<br><span style="font-size: 1.8rem; color: var(--sur-dark-pink); display: block; margin-top: 10px;">The SUR Edition</span></h1>
-            <p class="subtitle">Welcome to SUR, the Most Dramatically-Challenged Restaurant in West Hollywood.</p>
-            <button onclick="switchView('view-instructions')">Start Game</button>
+        <section id="view-splash" class="view active" style="display: flex;">
+            <div class="splash-frame">
+                <h1 class="title-main">Vanderpump</h1>
+                <h1 class="title-sub script-font">Guess Who</h1>
+                <p class="subtitle script-font" style="font-size: 2rem; color: var(--sur-gold); margin-bottom: 1rem;">The SUR Edition</p>
+                <p class="subtitle" style="margin: 0 auto 2rem auto;">Welcome to SUR, the Most Dramatically-Challenged Restaurant in West Hollywood.</p>
+                <button onclick="switchView('view-instructions')">Start Game</button>
+            </div>
         </section>
 
         <section id="view-instructions" class="view">
@@ -365,12 +382,12 @@
                 
                 <div class="demo-box">
                     <div class="demo-card">
-                        <img src="https://via.placeholder.com/150/FCE4EC/333333?text=[LISA_VP_PIC]" alt="Lisa VP Normal">
+                        <img id="demo-img-active" src="" alt="Active Demo">
                         <p>Active</p>
                     </div>
                     <div class="arrow">➔</div>
                     <div class="demo-card eliminated">
-                        <img src="https://via.placeholder.com/150/FCE4EC/333333?text=[LISA_VP_PIC]" alt="Lisa VP Grayed Out">
+                        <img id="demo-img-elim" src="" alt="Eliminated Demo">
                         <p>Eliminated</p>
                     </div>
                 </div>
@@ -385,13 +402,12 @@
                 <h2>Choose Your Secret Character</h2>
                 <p style="margin-bottom: 1.5rem;">Select who you will be, or leave it up to fate.</p>
                 
-                <div id="selector-grid" class="selector-grid">
-                    </div>
+                <div id="selector-grid" class="selector-grid"></div>
 
                 <button onclick="randomizeCharacter()" style="margin-top: 20px;">Randomize My Character</button>
 
                 <div class="feedback-banner" id="selection-feedback">
-                    Your Secret Character is: None Selected
+                    Your Secret Character is: <span style="font-style: italic; font-weight: normal;">None Selected</span>
                 </div>
 
                 <button id="btn-start-game" disabled onclick="startGame()">Start Game</button>
@@ -400,18 +416,17 @@
 
         <section id="view-game" class="view">
             <div class="game-header">
-                <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-dark-pink); font-weight: bold;"></span></h2>
+                <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-gold); font-weight: bold;"></span></h2>
             </div>
             
             <div class="game-layout">
                 <div class="board-container">
-                    <div id="game-board" class="board-grid">
-                        </div>
+                    <div id="game-board" class="board-grid"></div>
                 </div>
 
                 <div class="notepad-container">
-                    <div class="notepad-header">
-                        SUR NOTES (Don't let them see!)
+                    <div class="notepad-header script-font">
+                        From the desk of Lisa Vanderpump
                     </div>
                     <textarea class="notepad" placeholder="Jot down your clues here...&#10;- Not a bartender&#10;- No longer in the intro&#10;- Loves goat cheese balls"></textarea>
                 </div>
@@ -421,32 +436,81 @@
     </div>
 
     <script>
-        // Exact list of 24 characters to make a perfect 4x6 grid
-        const characters = [
-            "Lisa", "Ken", "Jax", "Stassi", "Sandoval", "Ariana", 
-            "Schwartz", "Katie", "Scheana", "James", "Lala", "Kristen", 
-            "Brittany", "Peter", "Raquel", "Beau", "Charli", "Dayna", 
-            "Max", "Brett", "Billie Lee", "Vail", "Laura-Leigh", "Frank"
-        ];
+        /* * =========================================================
+         * IMAGE DICTIONARY - UPDATE YOUR FILE PATHS HERE!
+         * =========================================================
+         * To fix your GitHub Pages issue, change the URLs below to your 
+         * relative file paths (e.g., "./images/lisa.jpg"). 
+         * Ensure spelling/capitalization matches your files EXACTLY.
+         */
+/* * =========================================================
+         * IMAGE DICTIONARY - REAL LOCAL PATHS
+         * =========================================================
+         * Updated to match your exact VS Code folder structure!
+         */
+        const IMAGE_DICTIONARY = {
+            "Lisa": "./images/lisa.jpg",
+            "Ken": "./images/ken.jpg",
+            "Jax": "./images/jax.jpg",
+            "Stassi": "./images/stassi.jpg",
+            "Sandoval": "./images/tom-sandoval.jpg",
+            "Ariana": "./images/ariana.jpg",
+            "Schwartz": "./images/tom-schwartz.jpg",
+            "Katie": "./images/katie.jpg",
+            "Scheana": "./images/scheana.jpg",
+            "James": "./images/james.jpg",
+            "Lala": "./images/lala.jpg",
+            "Kristen": "./images/kristen.jpg",
+            "Brittany": "./images/brittany.jpg",
+            "Peter": "./images/peter.jpg",
+            "Raquel": "./images/raquel.jpg",
+            "Beau": "./images/beau.jpg",
+            "Charli": "./images/charli.jpg",
+            "Dayna": "./images/dayna.jpg",
+            "Max": "./images/max.jpg",
+            "Brett": "./images/brett.jpg",
+            "Billie Lee": "./images/billie-lee.jpg",
+            "Vail": "./images/vail.jpg",
+            "Laura-Leigh": "./images/laura-leigh.jpg",
+            "Danica": "./images/danica.jpg" // Swapped Frank out for Danica!
+        };
 
+        const characters = Object.keys(IMAGE_DICTIONARY);
         let secretCharacter = null;
 
-        // Initialize UI on load
         window.onload = () => {
             renderSelectorGrid();
             renderGameBoard();
+            // Setup demo images
+            document.getElementById('demo-img-active').src = IMAGE_DICTIONARY["Lisa"];
+            document.getElementById('demo-img-elim').src = IMAGE_DICTIONARY["Lisa"];
         };
 
-        // Switch between SPA views (Hiding/Showing sections)
+        // Smooth Fade Transition Logic
         function switchView(viewId) {
-            document.querySelectorAll('.view').forEach(view => {
-                view.classList.remove('active');
-            });
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo(0, 0); // Reset scroll position for new view
+            const currentView = document.querySelector('.view.active');
+            const nextView = document.getElementById(viewId);
+            
+            if (currentView) {
+                // Start fade out
+                currentView.style.opacity = '0';
+                
+                // Wait for CSS transition (0.5s), then swap display
+                setTimeout(() => {
+                    currentView.classList.remove('active');
+                    currentView.style.display = 'none';
+                    
+                    nextView.style.display = 'flex';
+                    // Slight delay to ensure display:flex has rendered before fading in
+                    setTimeout(() => {
+                        nextView.classList.add('active');
+                    }, 50);
+                    
+                    window.scrollTo(0, 0);
+                }, 500); 
+            }
         }
 
-        // Render Selector Buttons
         function renderSelectorGrid() {
             const grid = document.getElementById('selector-grid');
             grid.innerHTML = '';
@@ -459,39 +523,29 @@
             });
         }
 
-        // Handle Character Selection & Feedback Update
         function selectCharacter(name) {
             secretCharacter = name;
+            document.getElementById('selection-feedback').innerHTML = `Your Secret Character is: <span style="font-weight:bold;">${name}</span>`;
             
-            // Update UI feedback banner
-            document.getElementById('selection-feedback').innerText = `Your Secret Character is: ${name}`;
-            
-            // Highlight selected button in the grid
             document.querySelectorAll('.selector-btn').forEach(btn => {
                 btn.classList.remove('selected');
                 if(btn.innerText === name) btn.classList.add('selected');
             });
 
-            // Enable Start Game Button
             document.getElementById('btn-start-game').disabled = false;
         }
 
-        // Randomize Character logic
         function randomizeCharacter() {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            const randomName = characters[randomIndex];
+            const randomName = characters[Math.floor(Math.random() * characters.length)];
             selectCharacter(randomName);
         }
 
-        // Transition to Main Game Board
         function startGame() {
             if (!secretCharacter) return;
-            // Update the persistent header
             document.getElementById('game-secret-display').innerText = secretCharacter.toUpperCase();
             switchView('view-game');
         }
 
-        // Render the 4x6 Main Game Board cards
         function renderGameBoard() {
             const board = document.getElementById('game-board');
             board.innerHTML = '';
@@ -499,12 +553,11 @@
             characters.forEach(name => {
                 const card = document.createElement('div');
                 card.className = 'character-card';
-                // Toggle elimination appearance on click
                 card.onclick = () => card.classList.toggle('eliminated');
 
                 const img = document.createElement('img');
-                // Using 150x150 placeholder with initials text for clarity
-                img.src = `https://via.placeholder.com/150/FCE4EC/333333?text=${name.substring(0,3).toUpperCase()}`;
+                // Use the image from the dictionary
+                img.src = IMAGE_DICTIONARY[name];
                 img.alt = name;
 
                 const label = document.createElement('p');
