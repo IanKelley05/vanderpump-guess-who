@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanderpump Rules - Guess Who?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bravo-pink: #fce4ec;
+            --bravo-gold: #d4af37;
+            --bravo-white: #ffffff;
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bravo-pink);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--bravo-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            background-color: var(--bravo-white);
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 2px solid var(--bravo-gold);
+        }
+
+        button {
+            background-color: var(--bravo-gold);
+            color: var(--bravo-white);
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #bfa030;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .secret-character-box {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        #secret-name {
+            color: var(--bravo-gold);
+            font-size: 24px;
+            display: block;
+            margin-top: 5px;
+            min-height: 29px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--bravo-white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--bravo-gold);
+            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .card .name {
+            padding: 12px 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        /* Flipped State Styling */
+        .card.flipped img {
+            filter: grayscale(100%);
+            opacity: 0.3;
+        }
+
+        .card.flipped .name {
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+
+        .card.flipped {
+            transform: scale(0.95);
+            box-shadow: none;
+            border-color: transparent;
+        }
+        
+        .card.flipped:hover {
+            transform: scale(0.95); /* Prevent hover pop-up when already eliminated */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>VPR Guess Who?</h1>
+    
+    <div class="controls">
+        <button id="pick-btn">Pick My Secret Character</button>
+        <div class="secret-character-box">
+            Your Secret Character:
+            <span id="secret-name">???</span>
+        </div>
+    </div>
+
+    <div class="grid" id="game-board">
+        </div>
+
+    <script>
+        const castMembers = [
+            "Lisa", "Jax", "Stassi", "Scheana", 
+            "Tom Sandoval", "Tom Schwartz", "Katie", "Ariana", 
+            "Lala", "James", "Brittany", "Kristen", 
+            "Beau", "Raquel", "Peter", "Ken", 
+            "Dayna", "Charli", "Danica", "Max", 
+            "Brett", "Billie Lee", "Laura-Leigh", "Vail"
+        ];
+
+        const gameBoard = document.getElementById('game-board');
+        const pickBtn = document.getElementById('pick-btn');
+        const secretNameDisplay = document.getElementById('secret-name');
+
+        // Function to build the game board
+        function initializeBoard() {
+            // Sort alphabetically for a slightly cleaner layout (optional)
+            const sortedCast = [...castMembers].sort();
+
+            sortedCast.forEach(member => {
+                // Create Card Container
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                // Create Image (using placeholder, appending text to easily distinguish them for now)
+                const img = document.createElement('img');
+                img.src = `https://via.placeholder.com/150/FFFFFF/D4AF37?text=${member.replace(' ', '+')}`;
+                img.alt = member;
+
+                // Create Name Label
+                const nameLabel = document.createElement('div');
+                nameLabel.className = 'name';
+                nameLabel.innerText = member;
+
+                // Append everything
+                card.appendChild(img);
+                card.appendChild(nameLabel);
+                gameBoard.appendChild(card);
+
+                // Add click listener for the 'flipped' state
+                card.addEventListener('click', () => {
+                    card.classList.toggle('flipped');
+                });
+            });
+        }
+
+        // Function to pick a random character
+        pickBtn.addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * castMembers.length);
+            const secretCharacter = castMembers[randomIndex];
+            
+            // Add a little animation effect to the text
+            secretNameDisplay.style.opacity = 0;
+            setTimeout(() => {
+                secretNameDisplay.innerText = secretCharacter;
+                secretNameDisplay.style.opacity = 1;
+            }, 200);
+        });
+
+        // Initialize the game on load
+        initializeBoard();
+    </script>
+
+</body>
+</html>
