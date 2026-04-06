@@ -175,7 +175,6 @@
         }
 
         /* --- View 1: Splash Screen --- */
-        /* No background-image — blobs are the backdrop now */
         #view-splash {
             padding: 0;
         }
@@ -189,31 +188,49 @@
             width: 100%;
             height: 100%;
             padding: 2rem;
+            z-index: 2; /* Keep above splash image */
         }
 
+        /* 100% Solid Opacity & Heavy Shadows for Legibility */
         #view-splash h1 {
             color: var(--sur-gold);
+            opacity: 1; /* Solid */
             font-size: clamp(3rem, 5vw, 5rem);
             text-transform: uppercase;
             letter-spacing: 6px;
             margin-bottom: 0;
-            text-shadow: 2px 2px 20px rgba(0,0,0,0.9);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8), 0px 0px 20px rgba(0,0,0,1);
         }
 
         #view-splash h2 {
-            color: var(--sur-gold-light);
+            color: var(--sur-white); /* Brilliant white for contrast */
+            opacity: 1; /* Solid */
             font-size: clamp(2.5rem, 4vw, 4rem);
             margin-top: -10px;
             margin-bottom: 1rem;
-            text-shadow: 2px 2px 15px rgba(0,0,0,0.9);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8), 0px 0px 15px rgba(0,0,0,1);
         }
 
         #view-splash p {
             color: var(--sur-white);
+            opacity: 1; /* Solid */
             font-size: 1.4rem;
             max-width: 700px;
             margin: 0 auto 2.5rem auto;
-            text-shadow: 1px 1px 10px rgba(0,0,0,0.9);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8), 0px 0px 15px rgba(0,0,0,1);
+            font-weight: 600; /* Extra legibility bump */
+        }
+
+        #view-splash button {
+            background-color: #140f16; /* 100% Solid Dark Background */
+            opacity: 1;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.9);
+            color: var(--sur-gold-light);
+        }
+
+        #view-splash button:hover {
+            background-color: var(--sur-gold);
+            color: #111;
         }
 
         /* --- Instruction Card & Selector Card --- */
@@ -336,7 +353,7 @@
             width: 100%;
             flex: 1;
             min-height: 0;
-            /* FIX: 30px right padding so notepad has breathing room */
+            /* 30px right padding so notepad has breathing room */
             padding: 20px 30px 20px 20px;
             gap: 25px;
         }
@@ -444,7 +461,8 @@
             padding: 30px 40px;
             font-size: 1.2rem;
             line-height: 40px;
-            color: var(--sur-gold-light);
+            color: var(--sur-white); /* Solid bright white for active typing */
+            text-shadow: 0px 0px 3px rgba(0,0,0,0.5);
             background-color: rgba(18, 13, 22, 0.92);
             text-align: center;
             background-image: repeating-linear-gradient(
@@ -455,8 +473,9 @@
         }
 
         .notepad::placeholder {
-            color: rgba(212, 175, 55, 0.35);
+            color: rgba(255, 255, 255, 0.6); /* Brighter off-white/gray */
             text-align: center;
+            text-shadow: none;
         }
 
         /* --- Responsive Safeties (Tablets & Mobile) --- */
@@ -478,24 +497,15 @@
 </head>
 <body>
 
-    <!-- =====================================================
-         LAVA LAMP BACKGROUND — JS-driven, fixed behind everything
-         ===================================================== -->
     <div class="bg-stage">
         <div class="bg-canvas" id="lava-canvas"></div>
     </div>
 
-    <!-- Vignette darkens edges for legibility -->
     <div class="bg-vignette"></div>
 
-    <!-- =====================================================
-         APP SHELL
-         ===================================================== -->
     <div id="app">
 
-        <!-- VIEW 1: Splash -->
         <section id="view-splash" class="view active" style="display: flex;">
-            <!-- Photo overlay ONLY on splash — blobs still glow underneath -->
             <div class="splash-bg-image"></div>
             <div class="splash-content">
                 <h1>Vanderpump Guess Who</h1>
@@ -505,7 +515,6 @@
             </div>
         </section>
 
-        <!-- VIEW 2: Instructions -->
         <section id="view-instructions" class="view">
             <div class="gold-container">
                 <h2>How to Play</h2>
@@ -528,7 +537,6 @@
             </div>
         </section>
 
-        <!-- VIEW 3: Character Selector -->
         <section id="view-selector" class="view">
             <div class="gold-container">
                 <h2>Choose Your Secret Character</h2>
@@ -546,7 +554,6 @@
             </div>
         </section>
 
-        <!-- VIEW 4: Game Board -->
         <section id="view-game" class="view">
             <div class="game-header">
                 <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-gold); font-weight: bold;"></span></h2>
@@ -594,7 +601,7 @@
         function vh() { return window.innerHeight * 1.5; }
 
         function rand(min, max) { return min + Math.random() * (max - min); }
-        function pick(arr)       { return arr[Math.floor(Math.random() * arr.length)]; }
+        function pick(arr)      { return arr[Math.floor(Math.random() * arr.length)]; }
 
         function createBlob(opts = {}) {
             const color  = opts.color  || pick(COLORS);
