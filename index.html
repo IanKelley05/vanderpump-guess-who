@@ -4,21 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vanderpump Guess Who: The SUR Edition</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --sur-light-pink: #FFF0F5;
-            --sur-blush: #F8C8D6;
+            --sur-pink: #F8E1E7;
             --sur-dark-pink: #DDA7B0;
             --sur-gold: #D4AF37;
-            --sur-gold-light: #F4D068;
             --sur-white: #FFFFFF;
             --sur-text: #2C2C2C;
-            --marble-bg: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --marble-bg: linear-gradient(135deg, #FFF5F7 0%, #FFFFFF 50%, #FDF0F3 100%);
         }
 
         * {
@@ -52,52 +46,96 @@
             opacity: 1;
         }
 
-        /* --- Typography --- */
-        .script-font {
-            font-family: 'Great Vibes', cursive;
+        /* --- Start Screen Specifics --- */
+        #view-splash {
+            position: relative;
+            background-image: url('image_1.png');
+            background-size: cover;
+            background-position: center;
         }
 
-        h1.title-main {
-            font-size: 4rem;
+        #view-splash::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000a0;
+            z-index: 0;
+        }
+
+        #view-splash > * {
+            z-index: 1;
+        }
+
+        #view-splash h1 {
+            color: var(--sur-gold);
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        #view-splash h2 {
+            color: var(--sur-gold);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        #view-splash p {
+            color: var(--sur-white);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        #view-splash button {
+            background-color: #8A2BE2; /* Rich purple */
+            color: var(--sur-gold);
+            border: 2px solid var(--sur-gold);
+            transition: box-shadow 0.3s ease;
+        }
+
+        #view-splash button:hover {
+            box-shadow: 0 0 10px 3px rgba(212, 175, 55, 0.6); /* Metallic gold glow */
+        }
+
+        /* --- Other Screens Specifics (Remain Unchanged) --- */
+        h1:not(#view-splash h1) {
+            font-size: 3.5rem;
             color: var(--sur-gold);
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: 4px;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
         }
 
-        h1.title-sub {
-            font-size: 3.5rem;
-            color: var(--sur-dark-pink);
-            text-align: center;
-            margin-top: -10px;
-            margin-bottom: 20px;
-            font-weight: normal;
-        }
-
-        h2 {
-            font-size: 2.2rem;
+        h2:not(#view-splash h2) {
+            font-size: 2rem;
             color: var(--sur-text);
             margin-bottom: 1.5rem;
             font-style: italic;
         }
 
         p.subtitle {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: var(--sur-text);
             text-align: center;
-            max-width: 650px;
-            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
             line-height: 1.6;
         }
 
-        /* --- Buttons --- */
         button {
-            background-color: var(--sur-blush);
+            background-color: var(--sur-white);
             color: var(--sur-text);
             border: 2px solid var(--sur-gold);
-            padding: 15px 40px;
+            padding: 15px 30px;
             font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -105,126 +143,106 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             margin: 10px;
-            border-radius: 5px;
-            font-weight: 600;
+            border-radius: 4px;
         }
 
-        button:hover:not(:disabled) {
-            background-color: var(--sur-white);
-            color: var(--sur-gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); /* Hover Glow */
-            transform: translateY(-2px);
+        button:hover:not(:disabled, #view-splash button) {
+            background-color: var(--sur-pink);
+            color: var(--sur-text);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
 
         button:disabled {
-            border-color: #d1d1d1;
-            color: #999;
+            border-color: #ccc;
+            color: #ccc;
             cursor: not-allowed;
-            background-color: #f5f5f5;
+            background-color: #f9f9f9;
             box-shadow: none;
-            transform: none;
         }
 
-        /* --- Splash Screen Specifics --- */
-        .splash-frame {
-            border: 3px solid var(--sur-gold);
-            padding: 4rem;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            text-align: center;
-            max-width: 900px;
-            position: relative;
-            backdrop-filter: blur(8px);
-        }
-
-        /* Subtle floral watermark effect in corners via pseudo-elements */
-        .splash-frame::before, .splash-frame::after {
-            content: "❀";
-            position: absolute;
-            font-size: 6rem;
-            color: var(--sur-blush);
-            opacity: 0.15;
-            z-index: -1;
-        }
-        .splash-frame::before { top: 10px; left: 20px; }
-        .splash-frame::after { bottom: 10px; right: 20px; }
-
-        /* --- Shared Containers --- */
-        .gold-container {
+        .gold-border-box {
             border: 1px solid var(--sur-gold);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 3rem;
+            background: var(--sur-white);
+            padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             text-align: center;
-            max-width: 850px;
+            max-width: 800px;
             width: 100%;
         }
 
         /* --- View 2: Instructions --- */
-        .demo-box {
+        .demo-container {
             display: flex;
             justify-content: center;
             gap: 2rem;
             margin: 2rem 0;
             align-items: center;
         }
+
         .demo-card {
             width: 150px;
+            text-align: center;
             border: 1px solid var(--sur-gold);
             padding: 10px;
             background: var(--sur-white);
             border-radius: 4px;
         }
+
         .demo-card img {
             width: 100%;
             border-radius: 4px;
-            margin-bottom: 8px;
         }
+
         .demo-card.eliminated img {
             filter: grayscale(100%);
-            opacity: 0.3;
+            opacity: 0.4;
         }
-        .demo-card.eliminated p {
-            color: #888;
-            text-decoration: line-through;
-        }
+
         .arrow {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: var(--sur-dark-pink);
         }
 
         /* --- View 3: Selector --- */
         .selector-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
             margin-bottom: 2rem;
         }
+
         .selector-btn {
-            padding: 12px;
+            padding: 10px;
             font-size: 1rem;
             margin: 0;
-            border-width: 1px;
         }
+
         .selector-btn.selected {
             background-color: var(--sur-gold);
             color: var(--sur-white);
         }
-        .feedback-banner {
-            background: var(--sur-light-pink);
+
+        .feedback-box {
+            background: var(--sur-pink);
             border: 1px solid var(--sur-dark-pink);
-            padding: 20px;
-            font-size: 1.4rem;
+            padding: 15px;
+            font-size: 1.3rem;
             font-weight: bold;
-            margin: 25px 0;
+            margin: 20px 0;
             border-radius: 4px;
         }
 
         /* --- View 4: Main Game Board --- */
         #view-game {
-            padding: 1rem 2rem;
+            display: none; /* Controlled by JS */
+            padding: 1rem;
+            min-height: 100vh;
+        }
+
+        #view-game.active {
+            display: flex;
+            flex-direction: column;
             justify-content: flex-start;
         }
 
@@ -232,17 +250,18 @@
             width: 100%;
             text-align: center;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--sur-white);
             border-bottom: 2px solid var(--sur-gold);
-            margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
             position: sticky;
             top: 0;
             z-index: 10;
         }
+
         .game-header h2 {
-            margin-bottom: 0;
             font-size: 1.5rem;
+            font-weight: bold;
         }
 
         .game-layout {
@@ -250,11 +269,14 @@
             flex-direction: row;
             width: 100%;
             max-width: 1400px;
-            gap: 30px;
+            gap: 20px;
             flex: 1;
         }
 
-        .board-container { flex: 3; }
+        .board-container {
+            flex: 3;
+        }
+
         .board-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -263,66 +285,71 @@
 
         .character-card {
             background: var(--sur-white);
-            border: 1px solid #e0e0e0;
+            border: 1px solid #eee;
             border-radius: 6px;
             padding: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+
         .character-card img {
             width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover;
+            height: auto;
             border-radius: 4px;
             margin-bottom: 8px;
             transition: all 0.3s ease;
         }
+
         .character-card p {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--sur-text);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
         }
+
         .character-card:hover {
             border-color: var(--sur-gold);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(212, 175, 55, 0.2);
         }
+
         .character-card.eliminated {
             border-color: #eee;
             transform: none;
             box-shadow: none;
-            background: #fafafa;
+            background: #fcfcfc;
         }
+
         .character-card.eliminated img {
             filter: grayscale(100%);
-            opacity: 0.25;
+            opacity: 0.3;
         }
+        
         .character-card.eliminated p {
-            color: #b0b0b0;
+            color: #aaa;
             text-decoration: line-through;
         }
 
-        /* --- SUR Notepad Styling --- */
+        /* --- SUR Notepad --- */
         .notepad-container {
             flex: 1;
-            min-width: 320px;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-            border-radius: 4px;
         }
 
         .notepad-header {
-            background: #fdfaf6;
+            background: var(--sur-pink);
             color: var(--sur-text);
             text-align: center;
-            padding: 25px 15px 15px 15px;
-            font-size: 2rem;
-            border: 1px solid #ddd;
-            border-bottom: 2px solid var(--sur-dark-pink);
-            border-radius: 4px 4px 0 0;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 1px solid var(--sur-dark-pink);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-style: italic;
         }
 
         .notepad {
@@ -330,33 +357,32 @@
             flex: 1;
             min-height: 500px;
             resize: none;
-            border: 1px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 4px 4px;
-            padding: 35px 20px 20px 60px;
-            font-size: 1.2rem;
-            line-height: 40px; /* Matches background spacing */
-            color: #333;
-            background-color: #fdfaf6; /* Paper color */
-            /* Realistic lined paper effect: Pink vertical margin line, blue horizontal lines */
-            background-image: 
-                linear-gradient(90deg, transparent 50px, #ffb3c6 50px, #ffb3c6 52px, transparent 52px),
-                repeating-linear-gradient(transparent, transparent 39px, #a8c1db 39px, #a8c1db 40px);
+            border: 1px solid var(--sur-dark-pink);
+            border-radius: 0 0 8px 8px;
+            padding: 30px 20px 20px 40px;
+            font-size: 1.1rem;
+            line-height: 30px;
+            background-color: var(--sur-white);
+            /* Lined paper effect */
+            background-image: linear-gradient(transparent, transparent 29px, var(--sur-pink) 30px);
+            background-size: 100% 30px;
             outline: none;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+            /* Vertical pink line for notebook margin */
+            position: relative;
         }
 
-        /* Responsive */
-        @media (max-width: 1100px) {
+        /* Responsive Adjustments */
+        @media (max-width: 1024px) {
             .board-grid { grid-template-columns: repeat(4, 1fr); }
             .game-layout { flex-direction: column; }
+            .notepad { min-height: 300px; }
         }
-        @media (max-width: 768px) {
-            h1.title-main { font-size: 2.8rem; }
-            h1.title-sub { font-size: 2.5rem; }
+        @media (max-width: 600px) {
+            h1:not(#view-splash h1) { font-size: 2rem; }
             .board-grid { grid-template-columns: repeat(3, 1fr); }
-            .splash-frame { padding: 2rem; }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 400px) {
             .board-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
@@ -365,49 +391,47 @@
 
     <div id="app">
 
-        <section id="view-splash" class="view active" style="display: flex;">
-            <div class="splash-frame">
-                <h1 class="title-main">Vanderpump</h1>
-                <h1 class="title-sub script-font">Guess Who</h1>
-                <p class="subtitle script-font" style="font-size: 2rem; color: var(--sur-gold); margin-bottom: 1rem;">The SUR Edition</p>
-                <p class="subtitle" style="margin: 0 auto 2rem auto;">Welcome to SUR, the Most Dramatically-Challenged Restaurant in West Hollywood.</p>
-                <button onclick="switchView('view-instructions')">Start Game</button>
-            </div>
+        <section id="view-splash" class="view active">
+            <h1>VANDERPUMP GUESS WHO</h1>
+            <h2>THE SUR EDITION</h2>
+            <p>Welcome to SUR, the Most Dramatically-Challenged Restaurant in West Hollywood.</p>
+            <button onclick="switchView('view-instructions')">Start Game</button>
         </section>
 
         <section id="view-instructions" class="view">
-            <div class="gold-container">
+            <div class="gold-border-box">
                 <h2>How to Play</h2>
                 <p class="subtitle" style="margin: 0 auto;">Your goal is to guess your partner's mystery character before they guess yours! Ask "Yes" or "No" questions. Click a character to eliminate them from your board.</p>
                 
-                <div class="demo-box">
+                <div class="demo-container">
                     <div class="demo-card">
-                        <img id="demo-img-active" src="" alt="Active Demo">
+                        <img id="demo-img-active" src="https://via.placeholder.com/150/FFB6C1/333333?text=[LISA_VP_PIC]" alt="Lisa Normal">
                         <p>Active</p>
                     </div>
                     <div class="arrow">➔</div>
                     <div class="demo-card eliminated">
-                        <img id="demo-img-elim" src="" alt="Eliminated Demo">
+                        <img id="demo-img-elim" src="https://via.placeholder.com/150/FFB6C1/333333?text=[LISA_VP_PIC]" alt="Lisa Grayed Out">
                         <p>Eliminated</p>
                     </div>
                 </div>
-                <p style="margin-bottom: 2rem; font-style: italic; color: #777;">Click a name to gray them out.</p>
+                <p style="margin-bottom: 2rem; font-style: italic; color: #666;">Click a name to gray them out.</p>
 
                 <button onclick="switchView('view-selector')">Continue to Selector</button>
             </div>
         </section>
 
         <section id="view-selector" class="view">
-            <div class="gold-container">
+            <div class="gold-border-box">
                 <h2>Choose Your Secret Character</h2>
-                <p style="margin-bottom: 1.5rem;">Select who you will be, or leave it up to fate.</p>
+                <p>Select who you will be, or leave it up to fate.</p>
                 
-                <div id="selector-grid" class="selector-grid"></div>
+                <div id="selector-grid" class="selector-grid">
+                    </div>
 
-                <button onclick="randomizeCharacter()" style="margin-top: 20px;">Randomize My Character</button>
+                <button onclick="randomizeCharacter()">Randomize My Character</button>
 
-                <div class="feedback-banner" id="selection-feedback">
-                    Your Secret Character is: <span style="font-style: italic; font-weight: normal;">None Selected</span>
+                <div class="feedback-box" id="selection-feedback">
+                    Your Secret Character is: None Selected
                 </div>
 
                 <button id="btn-start-game" disabled onclick="startGame()">Start Game</button>
@@ -416,17 +440,18 @@
 
         <section id="view-game" class="view">
             <div class="game-header">
-                <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-gold); font-weight: bold;"></span></h2>
+                <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-dark-pink);"></span></h2>
             </div>
             
             <div class="game-layout">
                 <div class="board-container">
-                    <div id="game-board" class="board-grid"></div>
+                    <div id="game-board" class="board-grid">
+                        </div>
                 </div>
 
                 <div class="notepad-container">
-                    <div class="notepad-header script-font">
-                        From the desk of Lisa Vanderpump
+                    <div class="notepad-header">
+                        🌸 SUR NOTES (Don't let them see!) 🌸
                     </div>
                     <textarea class="notepad" placeholder="Jot down your clues here...&#10;- Not a bartender&#10;- No longer in the intro&#10;- Loves goat cheese balls"></textarea>
                 </div>
@@ -436,81 +461,47 @@
     </div>
 
     <script>
-        /* * =========================================================
-         * IMAGE DICTIONARY - UPDATE YOUR FILE PATHS HERE!
-         * =========================================================
-         * To fix your GitHub Pages issue, change the URLs below to your 
-         * relative file paths (e.g., "./images/lisa.jpg"). 
-         * Ensure spelling/capitalization matches your files EXACTLY.
-         */
-/* * =========================================================
-         * IMAGE DICTIONARY - REAL LOCAL PATHS
-         * =========================================================
-         * Updated to match your exact VS Code folder structure!
-         */
-        const IMAGE_DICTIONARY = {
-            "Lisa": "./images/lisa.jpg",
-            "Ken": "./images/ken.jpg",
-            "Jax": "./images/jax.jpg",
-            "Stassi": "./images/stassi.jpg",
-            "Sandoval": "./images/tom-sandoval.jpg",
-            "Ariana": "./images/ariana.jpg",
-            "Schwartz": "./images/tom-schwartz.jpg",
-            "Katie": "./images/katie.jpg",
-            "Scheana": "./images/scheana.jpg",
-            "James": "./images/james.jpg",
-            "Lala": "./images/lala.jpg",
-            "Kristen": "./images/kristen.jpg",
-            "Brittany": "./images/brittany.jpg",
-            "Peter": "./images/peter.jpg",
-            "Raquel": "./images/raquel.jpg",
-            "Beau": "./images/beau.jpg",
-            "Charli": "./images/charli.jpg",
-            "Dayna": "./images/dayna.jpg",
-            "Max": "./images/max.jpg",
-            "Brett": "./images/brett.jpg",
-            "Billie Lee": "./images/billie-lee.jpg",
-            "Vail": "./images/vail.jpg",
-            "Laura-Leigh": "./images/laura-leigh.jpg",
-            "Danica": "./images/danica.jpg" // Swapped Frank out for Danica!
-        };
+        // Data: 24 iconic characters
+        const characters = [
+            "Lisa", "Ken", "Jax", "Stassi", "Sandoval", "Ariana", 
+            "Schwartz", "Katie", "Scheana", "James", "Lala", "Kristen", 
+            "Brittany", "Peter", "Raquel", "Beau", "Charli", "Dayna", 
+            "Max", "Brett", "Billie Lee", "Vail", "Laura-Leigh", "Frank"
+        ];
 
-        const characters = Object.keys(IMAGE_DICTIONARY);
         let secretCharacter = null;
 
+        // Initialize UI on load
         window.onload = () => {
             renderSelectorGrid();
             renderGameBoard();
-            // Setup demo images
-            document.getElementById('demo-img-active').src = IMAGE_DICTIONARY["Lisa"];
-            document.getElementById('demo-img-elim').src = IMAGE_DICTIONARY["Lisa"];
+            // Optional: Setup demo images dynamically if needed, 
+            // but placeholders are acceptable here as per original design.
         };
 
-        // Smooth Fade Transition Logic
+        // Switch between SPA views with fade transition
         function switchView(viewId) {
             const currentView = document.querySelector('.view.active');
             const nextView = document.getElementById(viewId);
             
             if (currentView) {
-                // Start fade out
+                // Fade out current
                 currentView.style.opacity = '0';
                 
-                // Wait for CSS transition (0.5s), then swap display
+                // Wait for fade, then switch
                 setTimeout(() => {
                     currentView.classList.remove('active');
-                    currentView.style.display = 'none';
-                    
-                    nextView.style.display = 'flex';
-                    // Slight delay to ensure display:flex has rendered before fading in
+                    nextView.style.display = 'flex'; // Ensure flex for centering
+                    // Wait slight delay, then fade in next
                     setTimeout(() => {
                         nextView.classList.add('active');
                     }, 50);
-                    
                     window.scrollTo(0, 0);
                 }, 500); 
             }
         }
 
+        // Render Selector Buttons
         function renderSelectorGrid() {
             const grid = document.getElementById('selector-grid');
             grid.innerHTML = '';
@@ -523,29 +514,38 @@
             });
         }
 
+        // Handle Character Selection
         function selectCharacter(name) {
             secretCharacter = name;
-            document.getElementById('selection-feedback').innerHTML = `Your Secret Character is: <span style="font-weight:bold;">${name}</span>`;
             
+            // Update UI feedback
+            document.getElementById('selection-feedback').innerText = `Your Secret Character is: ${name}`;
+            
+            // Highlight selected button
             document.querySelectorAll('.selector-btn').forEach(btn => {
                 btn.classList.remove('selected');
                 if(btn.innerText === name) btn.classList.add('selected');
             });
 
+            // Enable Start Button
             document.getElementById('btn-start-game').disabled = false;
         }
 
+        // Randomize Character
         function randomizeCharacter() {
-            const randomName = characters[Math.floor(Math.random() * characters.length)];
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            const randomName = characters[randomIndex];
             selectCharacter(randomName);
         }
 
+        // Start Game Transition
         function startGame() {
             if (!secretCharacter) return;
             document.getElementById('game-secret-display').innerText = secretCharacter.toUpperCase();
             switchView('view-game');
         }
 
+        // Render the 4x6 Main Game Board
         function renderGameBoard() {
             const board = document.getElementById('game-board');
             board.innerHTML = '';
@@ -556,8 +556,8 @@
                 card.onclick = () => card.classList.toggle('eliminated');
 
                 const img = document.createElement('img');
-                // Use the image from the dictionary
-                img.src = IMAGE_DICTIONARY[name];
+                // Using placeholder with consistent styling. Using initials/name in text for clarity.
+                img.src = `https://via.placeholder.com/150/F8E1E7/2C2C2C?text=${name}`;
                 img.alt = name;
 
                 const label = document.createElement('p');
