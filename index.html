@@ -174,6 +174,16 @@
             box-shadow: none;
         }
 
+        /* Tiny Button specifically for toggling the secret character */
+        .btn-tiny {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin: 0;
+            border-width: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
         /* --- View 1: Splash Screen --- */
         #view-splash {
             padding: 0;
@@ -338,6 +348,13 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             z-index: 10;
             backdrop-filter: blur(20px);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
         
         .game-header h2 {
@@ -556,7 +573,10 @@
 
         <section id="view-game" class="view">
             <div class="game-header">
-                <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-gold); font-weight: bold;"></span></h2>
+                <div class="header-container">
+                    <h2>YOUR SECRET CHARACTER IS: <span id="game-secret-display" style="color: var(--sur-gold); font-weight: bold;"></span></h2>
+                    <button id="toggle-secret-btn" class="btn-tiny" onclick="toggleSecretCharacter()">Hide</button>
+                </div>
             </div>
             
             <div class="game-content-wrapper">
@@ -779,6 +799,7 @@
 
         const characters = Object.keys(IMAGE_DICTIONARY);
         let secretCharacter = null;
+        let isSecretHidden = false;
 
         window.onload = () => {
             renderSelectorGrid();
@@ -834,8 +855,28 @@
 
         function startGame() {
             if (!secretCharacter) return;
+            
+            // Reset hide state for a new game
+            isSecretHidden = false;
             document.getElementById('game-secret-display').innerText = secretCharacter.toUpperCase();
+            document.getElementById('toggle-secret-btn').innerText = 'Hide';
+            
             switchView('view-game');
+        }
+
+        function toggleSecretCharacter() {
+            const displaySpan = document.getElementById('game-secret-display');
+            const toggleBtn = document.getElementById('toggle-secret-btn');
+            
+            isSecretHidden = !isSecretHidden;
+            
+            if (isSecretHidden) {
+                displaySpan.innerText = '???';
+                toggleBtn.innerText = 'Show';
+            } else {
+                displaySpan.innerText = secretCharacter.toUpperCase();
+                toggleBtn.innerText = 'Hide';
+            }
         }
 
         function renderGameBoard() {
